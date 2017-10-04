@@ -11,7 +11,7 @@ public class Driver implements java.sql.Driver {
     }
 
     public Connection connect(String url, Properties info) throws SQLException {
-        return null;
+        return new MockConnection(url, info);
     }
 
     public boolean acceptsURL(String url) throws SQLException {
