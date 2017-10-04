@@ -6,12 +6,12 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class MockConnection implements Connection {
-    private final Properties connectionProps = new Properties();
+    private final Properties connectionProperties = new Properties();
     private final String url;
 
     public MockConnection(String url, Properties info) {
         this.url = url;
-        this.connectionProps.putAll(info);
+        this.connectionProperties.putAll(info);
     }
 
     @Override
@@ -282,5 +282,9 @@ public class MockConnection implements Connection {
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         throw new UnsupportedOperationException("not yet");
+    }
+
+    public Properties getConnectionProperties() {
+        return connectionProperties;
     }
 }
