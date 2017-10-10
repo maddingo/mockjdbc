@@ -3,6 +3,7 @@ package no.maddin.mockjdbc;
 import org.junit.Test;
 
 import java.sql.Connection;
+import java.sql.DriverAction;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;

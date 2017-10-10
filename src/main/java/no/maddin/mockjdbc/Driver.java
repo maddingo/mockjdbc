@@ -1,13 +1,24 @@
 package no.maddin.mockjdbc;
 
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 public class Driver implements java.sql.Driver {
 
-    public Driver() throws SQLException {
-        DriverManager.registerDriver(this);
+
+    static {
+        try {
+            DriverManager.registerDriver(new Driver());
+        } catch (SQLException e) {
+            PrintWriter pw = DriverManager.getLogWriter();
+            if (pw != null) {
+                e.printStackTrace(pw);
+            } else {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Connection connect(String url, Properties info) throws SQLException {
@@ -23,11 +34,11 @@ public class Driver implements java.sql.Driver {
     }
 
     public int getMajorVersion() {
-        return 0;
+        return 1;
     }
 
     public int getMinorVersion() {
-        return 1;
+        return 0;
     }
 
     public boolean jdbcCompliant() {
@@ -35,6 +46,7 @@ public class Driver implements java.sql.Driver {
     }
 
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
+
 }
