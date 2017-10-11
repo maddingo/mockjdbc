@@ -35,4 +35,5 @@ public class DriverTest {
         assertThat(connection, is(instanceOf(MockConnection.class)));
         assertThat(((MockConnection)connection).getConnectionProperties(), hasKey("repeat"));
     }
+
 }
