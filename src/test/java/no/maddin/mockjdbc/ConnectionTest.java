@@ -30,14 +30,16 @@ public class ConnectionTest {
         checkPath = new File(basePath, "csv-check");
     }
 
+    /**
+     * This test reads a test database writes the result to a file and re-reads the result and compares the results.
+     */
     @Test
     public void selectTagAndValue() throws Exception {
         String checkFile = DriverTool.fileName(SELECT_A_B_FROM_MYTABLE);
-        File f = new File(checkPath, checkFile);
+        File f = new File(checkPath, checkFile + ".csv");
 
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         try (PrintWriter fw = new PrintWriter(new FileWriter(f.getPath()))) {
-            fw.println("# " + SELECT_A_B_FROM_MYTABLE);
             fw.println("a, b");
             try (
                 Connection con = DriverManager.getConnection("jdbc:mock:csv;path=" + origPath.getAbsolutePath());

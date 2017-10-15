@@ -8,10 +8,22 @@ import java.util.concurrent.Executor;
 public class MockConnection implements Connection {
     private final Properties connectionProperties = new Properties();
     private final String url;
+    private Statement currentStatement;
 
     public MockConnection(String url, Properties info) {
         this.url = url;
+        addPropsFromUrl(url);
         this.connectionProperties.putAll(info);
+    }
+
+    private void addPropsFromUrl(String url) {
+        int propSeparator = url.indexOf(';');
+        String[] propPairs = url.substring(propSeparator + 1).split("\\s*,\\s*");
+
+        for (String propPair : propPairs) {
+            String[] keyValue = propPair.split("\\s*=\\s*");
+            connectionProperties.put(keyValue[0], keyValue[1]);
+        }
     }
 
     @Override
@@ -21,7 +33,11 @@ public class MockConnection implements Connection {
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        if (currentStatement != null) {
+            throw new IllegalArgumentException("previous connection not closed");
+        }
+        currentStatement = new MockStatement(connectionProperties, sql);
+        return (PreparedStatement)currentStatement;
     }
 
     @Override
@@ -56,7 +72,7 @@ public class MockConnection implements Connection {
 
     @Override
     public void close() throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        currentStatement.close();
     }
 
     @Override
