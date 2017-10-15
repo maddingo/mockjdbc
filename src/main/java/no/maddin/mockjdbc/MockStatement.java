@@ -699,8 +699,7 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public ResultSet executeQuery() throws SQLException {
-        throw new UnsupportedOperationException("executeQuery");
-
+        return new MockResultSet(currentFile);
     }
 
     @Override
