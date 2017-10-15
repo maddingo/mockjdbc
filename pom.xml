@@ -12,8 +12,8 @@
 
     <scm>
         <url>https://github.com/maddingo/mockjdbc</url>
-        <connection>https://github.com/maddingo/mockjdbc</connection>
-        <developerConnection>ssh://git@github.com/maddingo/mockjdbc.git</developerConnection>
+        <connection>scm:git:https://github.com/maddingo/mockjdbc</connection>
+        <developerConnection>scm:git:ssh://git@github.com/maddingo/mockjdbc.git</developerConnection>
     </scm>
 
     <issueManagement>
@@ -22,6 +22,22 @@
     </issueManagement>
 
     <inceptionYear>2017</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Martin Goldhahn</name>
+            <id>maddingo</id>
+            <timezone>Europe/Oslo</timezone>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
