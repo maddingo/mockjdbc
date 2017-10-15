@@ -5,4 +5,9 @@ jdk:
   - openjdk8
   - oraclejdk9
 
-script: mvn clean verify
+addons:
+  sonarcloud:
+    organization: "maddingo-github"
+
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
