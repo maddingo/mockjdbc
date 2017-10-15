@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MockResultSet implements ResultSet {
     private final File csvFile;
@@ -21,13 +22,13 @@ public class MockResultSet implements ResultSet {
 
     public MockResultSet(File csvFile) throws SQLException {
         this.csvFile = csvFile;
-        try {
-            lines = Files.lines(csvFile.toPath()).collect(Collectors.toList()).iterator();
+        try (Stream<String> stringStream = Files.lines(csvFile.toPath())) {
+            this.lines = stringStream.collect(Collectors.toList()).iterator();
         } catch (IOException ex) {
             throw new SQLException(ex);
         }
 
-        headers = splitLine(lines.next());
+        headers = splitLine(this.lines.next());
     }
 
     private String[] splitLine(String s) {
