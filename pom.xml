@@ -8,6 +8,7 @@
 
     <name>mock-jdbc</name>
     <url>https://github.com/maddingo/mockjdbc</url>
+    <description>A JDBC driver that uses text files and can be used for testing.</description>
 
     <scm>
         <url>https://github.com/maddingo/mockjdbc</url>
