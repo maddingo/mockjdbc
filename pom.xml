@@ -3,7 +3,7 @@
 
     <groupId>no.maddin.mockjdbc</groupId>
     <artifactId>mock-jdbc</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>mock-jdbc</name>
@@ -14,7 +14,7 @@
         <url>https://github.com/maddingo/mockjdbc</url>
         <connection>scm:git:https://github.com/maddingo/mockjdbc</connection>
         <developerConnection>scm:git:ssh://git@github.com/maddingo/mockjdbc.git</developerConnection>
-      <tag>mock-jdbc-0.1.2</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <issueManagement>
