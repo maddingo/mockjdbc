@@ -6,10 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -70,5 +67,18 @@ public class ConnectionTest {
             }
         }
         assertThat(map.entrySet(), is(not(empty())));
+    }
+
+    @Test
+    public void createStatement() throws Exception {
+        try (
+            Connection con = DriverManager.getConnection("jdbc:mock:csv;path=" + origPath.getAbsolutePath());
+            Statement st = con.createStatement()
+        ) {
+            ResultSet rs = st.executeQuery(SELECT_A_B_FROM_MYTABLE);
+            while (rs.next()) {
+                assertThat(rs.getString("a"), is(notNullValue()));
+            }
+        }
     }
 }

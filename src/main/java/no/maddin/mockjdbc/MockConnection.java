@@ -28,7 +28,11 @@ public class MockConnection implements Connection {
 
     @Override
     public Statement createStatement() throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        if (currentStatement != null) {
+            throw new IllegalArgumentException("previous connection not closed");
+        }
+        currentStatement = new MockStatement(connectionProperties, null);
+        return currentStatement;
     }
 
     @Override
