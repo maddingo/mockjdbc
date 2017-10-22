@@ -1,35 +1,27 @@
 package no.maddin.mockjdbc;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.sql.*;
 import java.util.*;
+import java.util.stream.*;
 
 import org.apache.commons.beanutils.MethodUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-public class ConnectionTest {
+class ConnectionTest {
 
     private static final String SELECT_A_B_FROM_MYTABLE = "select a, b from mytable";
     private static File origPath;
     private static File checkPath;
-
-    @Parameterized.Parameter(0)
-    public String testName;
-
-    @Parameterized.Parameter(1)
-    public ConnectionCall<Connection, Statement> createStatementCall;
-
-    @Parameterized.Parameter(2)
-    public ConnectionCall<Statement, ResultSet> createResultSetCall;
 
     private static class ConnectionCall<S, T> {
         private final String method;
@@ -53,56 +45,69 @@ public class ConnectionTest {
         }
     }
 
-    @Parameterized.Parameters(name = "{index} {0}")
-    public static Collection<Object[]> data() {
+    private static Stream<Arguments> data() {
 
-        Collection<Object[]> data = new ArrayList<>();
-        data.add(new Object[] {
-            "prepareStatement",
-            ConnectionCall.create("prepareStatement", SELECT_A_B_FROM_MYTABLE),
-            ConnectionCall.create("executeQuery")
-        });
-        data.add(new Object[] {
-            "prepareStatement(2)",
-            ConnectionCall.create("prepareStatement", SELECT_A_B_FROM_MYTABLE, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
-            ConnectionCall.create("executeQuery")
-        });
-        data.add(new Object[] {
-            "prepareStatement(3)",
-            ConnectionCall.create("prepareStatement", SELECT_A_B_FROM_MYTABLE, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.CLOSE_CURSORS_AT_COMMIT),
-            ConnectionCall.create("executeQuery")
-        });
-        data.add(new Object[] {
-            "createStatement",
-            ConnectionCall.create("createStatement"),
-            ConnectionCall.create("executeQuery", SELECT_A_B_FROM_MYTABLE)
-        });
-        data.add(new Object[] {
-            "createStatement(2)",
-            ConnectionCall.create("createStatement", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
-            ConnectionCall.create("executeQuery", SELECT_A_B_FROM_MYTABLE)
-        });
-        data.add(new Object[] {
-            "createStatement(3)",
-            ConnectionCall.create("createStatement", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.CLOSE_CURSORS_AT_COMMIT),
-            ConnectionCall.create("executeQuery", SELECT_A_B_FROM_MYTABLE)
-        });
-        return data;
+        return Stream.of(
+            Arguments.of(
+                "prepareStatement",
+                ConnectionCall.create("prepareStatement", SELECT_A_B_FROM_MYTABLE),
+                ConnectionCall.create("executeQuery")
+            ),
+            Arguments.of(
+                "prepareStatement(2)",
+                ConnectionCall.create("prepareStatement", SELECT_A_B_FROM_MYTABLE, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
+                ConnectionCall.create("executeQuery")
+            ),
+            Arguments.of(
+                "prepareStatement(3)",
+                ConnectionCall.create("prepareStatement", SELECT_A_B_FROM_MYTABLE, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.CLOSE_CURSORS_AT_COMMIT),
+                ConnectionCall.create("executeQuery")
+            ),
+            Arguments.of(
+                "createStatement",
+                ConnectionCall.create("createStatement"),
+                ConnectionCall.create("executeQuery", SELECT_A_B_FROM_MYTABLE)
+            ),
+            Arguments.of(
+                "createStatement(2)",
+                ConnectionCall.create("createStatement", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
+                ConnectionCall.create("executeQuery", SELECT_A_B_FROM_MYTABLE)
+            ),
+            Arguments.of(
+                "createStatement(3)",
+                ConnectionCall.create("createStatement", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.CLOSE_CURSORS_AT_COMMIT),
+                ConnectionCall.create("executeQuery", SELECT_A_B_FROM_MYTABLE)
+            )
+        );
     }
 
 
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         String basePath = ConnectionTest.class.getResource("/").getFile();
         origPath = new File(basePath, "csv");
         checkPath = new File(basePath, "csv-check");
     }
 
+
     /**
+     *     public String testName;
+
+     public ConnectionCall<Connection, Statement> createStatementCall;
+
+     public ConnectionCall<Statement, ResultSet> createResultSetCall;
+
+
      * This test reads a test database, writes the result to a file and re-reads the result and compares the results.
      */
-    @Test
-    public void connectionTest() throws Exception {
+    @DisplayName("Connection Tests")
+    @ParameterizedTest(name = "{index} {0}")
+    @MethodSource("data")
+    void connectionTest(
+        String testName,
+        ConnectionCall<Connection, Statement> createStatementCall,
+        ConnectionCall<Statement, ResultSet> createResultSetCall
+    ) throws Exception {
         String checkFile = DriverTool.fileName(SELECT_A_B_FROM_MYTABLE);
         File f = new File(checkPath, checkFile + ".csv");
 
