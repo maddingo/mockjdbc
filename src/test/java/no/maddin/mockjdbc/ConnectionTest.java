@@ -50,27 +50,26 @@ public class ConnectionTest {
             } catch (ReflectiveOperationException e) {
                 throw new SQLException(e);
             }
-//            Class<?>[] argTypes = new Class[args.length];
-//            int i = 0;
-//            for (Object arg : args) {
-//                argTypes[i++] = arg.getClass();
-//            }
-//            try {
-//                Method m = srcObject.getClass().getMethod(method, argTypes);
-//                return (T) m.invoke(srcObject, args);
-//            } catch (ReflectiveOperationException e) {
-//                throw new SQLException(e);
-//            }
-
         }
     }
 
     @Parameterized.Parameters(name = "{index} {0}")
     public static Collection<Object[]> data() {
+
         Collection<Object[]> data = new ArrayList<>();
         data.add(new Object[] {
             "prepareStatement",
             ConnectionCall.create("prepareStatement", SELECT_A_B_FROM_MYTABLE),
+            ConnectionCall.create("executeQuery")
+        });
+        data.add(new Object[] {
+            "prepareStatement(2)",
+            ConnectionCall.create("prepareStatement", SELECT_A_B_FROM_MYTABLE, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
+            ConnectionCall.create("executeQuery")
+        });
+        data.add(new Object[] {
+            "prepareStatement(3)",
+            ConnectionCall.create("prepareStatement", SELECT_A_B_FROM_MYTABLE, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.CLOSE_CURSORS_AT_COMMIT),
             ConnectionCall.create("executeQuery")
         });
         data.add(new Object[] {
@@ -139,31 +138,5 @@ public class ConnectionTest {
             }
         }
         assertThat(map.entrySet(), is(not(empty())));
-    }
-
-//    @Test
-    public void createStatement2Args() throws Exception {
-        try (
-            Connection con = DriverManager.getConnection("jdbc:mock:csv;path=" + origPath.getAbsolutePath());
-            Statement st = con.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
-        ) {
-            ResultSet rs = st.executeQuery(SELECT_A_B_FROM_MYTABLE);
-            while (rs.next()) {
-                assertThat(rs.getString("a"), is(notNullValue()));
-            }
-        }
-    }
-
-//    @Test
-    public void createStatement3Args() throws Exception {
-        try (
-            Connection con = DriverManager.getConnection("jdbc:mock:csv;path=" + origPath.getAbsolutePath());
-            Statement st = con.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.CLOSE_CURSORS_AT_COMMIT)
-        ) {
-            ResultSet rs = st.executeQuery(SELECT_A_B_FROM_MYTABLE);
-            while (rs.next()) {
-                assertThat(rs.getString("a"), is(notNullValue()));
-            }
-        }
     }
 }
