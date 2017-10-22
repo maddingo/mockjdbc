@@ -68,7 +68,10 @@ public class MockConnection implements Connection {
 
     @Override
     public void close() throws SQLException {
-        currentStatement.close();
+        if (currentStatement != null) {
+            currentStatement.close();
+            currentStatement = null;
+        }
     }
 
     @Override

@@ -6,16 +6,18 @@ import static org.hamcrest.Matchers.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.*;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.commons.support.ReflectionSupport;
+import org.junit.platform.commons.util.ExceptionUtils;
 
 class ConnectionTest {
 
@@ -37,11 +39,24 @@ class ConnectionTest {
         }
 
         private T createObject(S srcObject) throws SQLException {
-            try {
-                return (T) MethodUtils.invokeMethod(srcObject, method, args);
-            } catch (ReflectiveOperationException e) {
-                throw new SQLException(e);
-            }
+                Class[] argTypes = Stream.of(args)
+                    .map(o -> {
+                        Class<?> oClass = o.getClass();
+                        switch(oClass.getSimpleName()) {
+                            case "Integer":
+                                return int.class;
+                            default:
+                                return oClass;
+                        }
+                    })
+                    .collect(Collectors.toList())
+                    .toArray(new Class[0]);
+                Optional<Method> m = ReflectionSupport.findMethod(srcObject.getClass(), method, argTypes);
+
+                return (T) ReflectionSupport.invokeMethod(
+                    m.orElseThrow(() -> ExceptionUtils.throwAsUncheckedException(new SQLException("Missing function: " + method))),
+                    srcObject,
+                    args);
         }
     }
 
