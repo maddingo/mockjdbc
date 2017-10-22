@@ -28,16 +28,12 @@ public class MockConnection implements Connection {
 
     @Override
     public Statement createStatement() throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        return createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        if (currentStatement != null) {
-            throw new IllegalArgumentException("previous connection not closed");
-        }
-        currentStatement = new MockStatement(connectionProperties, sql);
-        return (PreparedStatement)currentStatement;
+        return prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     }
 
     @Override
@@ -127,12 +123,12 @@ public class MockConnection implements Connection {
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        return createStatement(resultSetType, resultSetConcurrency, ResultSet.CLOSE_CURSORS_AT_COMMIT);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        return prepareStatement(sql, resultSetType, resultSetConcurrency, ResultSet.CLOSE_CURSORS_AT_COMMIT);
     }
 
     @Override
@@ -182,12 +178,39 @@ public class MockConnection implements Connection {
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        if (resultSetType != ResultSet.TYPE_FORWARD_ONLY) {
+            throw new SQLException("Unsupported resultSetType " + resultSetType);
+        }
+        if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY) {
+            throw new SQLException("Unsupported resultSetConcurrency " + resultSetConcurrency);
+        }
+        if (resultSetHoldability != ResultSet.CLOSE_CURSORS_AT_COMMIT) {
+            throw new SQLException("Unsupported resultSetHoldability " + resultSetHoldability);
+        }
+        if (currentStatement != null) {
+            throw new SQLException("previous connection not closed");
+        }
+        currentStatement = new MockStatement(connectionProperties, null);
+        return currentStatement;
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        if (resultSetType != ResultSet.TYPE_FORWARD_ONLY) {
+            throw new SQLException("Unsupported resultSetType " + resultSetType);
+        }
+        if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY) {
+            throw new SQLException("Unsupported resultSetConcurrency " + resultSetConcurrency);
+        }
+        if (resultSetHoldability != ResultSet.CLOSE_CURSORS_AT_COMMIT) {
+            throw new SQLException("Unsupported resultSetHoldability " + resultSetHoldability);
+        }
+        if (currentStatement != null) {
+            throw new SQLException("previous connection not closed");
+        }
+        currentStatement = new MockStatement(connectionProperties, sql);
+
+        return (PreparedStatement)currentStatement;
     }
 
     @Override

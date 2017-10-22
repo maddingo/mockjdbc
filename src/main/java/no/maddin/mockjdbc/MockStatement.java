@@ -12,11 +12,21 @@ import java.util.Properties;
 
 public class MockStatement implements CallableStatement {
 
-    private final File currentFile;
+    private File currentFile;
+    private Properties connectionProperties;
 
     public MockStatement(Properties connectionProperties, String sql) {
-        currentFile = new File(connectionProperties.getProperty("path"), DriverTool.fileName(sql) + ".csv");
+        this.connectionProperties = connectionProperties;
+        if (sql != null) {
+            openCurrentFile(sql);
+        }
+    }
 
+    private void openCurrentFile(String sql) {
+        if (currentFile != null) {
+            throw new IllegalArgumentException("file already set");
+        }
+        currentFile = new File(connectionProperties.getProperty("path"), DriverTool.fileName(sql) + ".csv");
     }
 
     @Override
@@ -1028,7 +1038,8 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {
-        throw new UnsupportedOperationException("executeQuery");
+        openCurrentFile(sql);
+        return new MockResultSet(currentFile);
 
     }
 
