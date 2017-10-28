@@ -17,8 +17,8 @@ import java.util.stream.Stream;
 public class MockResultSet implements ResultSet {
     private final File csvFile;
     private final Iterator<String> lines;
-    private final String[] headers;
     private Record currentRecord;
+    private MockResultSetMetaData metaData;
 
     public MockResultSet(File csvFile) throws SQLException {
         this.csvFile = csvFile;
@@ -27,8 +27,14 @@ public class MockResultSet implements ResultSet {
         } catch (IOException ex) {
             throw new SQLException(ex);
         }
+        metaData = createMetaData();
+    }
 
-        headers = splitLine(this.lines.next());
+    private MockResultSetMetaData createMetaData() throws SQLException {
+        if (!lines.hasNext()) {
+            throw new SQLException("Missing header line, cannot create metadata");
+        }
+        return new MockResultSetMetaData("mytable", lines.next());
     }
 
     private String[] splitLine(String s) {
@@ -46,12 +52,13 @@ public class MockResultSet implements ResultSet {
 
     private Record readRecord(String line) {
         String[] stringRecord = splitLine(line);
-        return Record.create(stringRecord, headers);
+        return Record.create(stringRecord, metaData.getColumnNames());
     }
 
     @Override
     public void close() throws SQLException {
         this.currentRecord = null;
+        this.metaData = null;
     }
 
     @Override
@@ -62,14 +69,16 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getString");
+        if (currentRecord == null) {
+            throw new SQLException("No valid result set");
+        }
 
+        return currentRecord.get(metaData.getColumnName(columnIndex));
     }
 
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
         throw new UnsupportedOperationException("getBoolean");
-
     }
 
     @Override
@@ -275,8 +284,10 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        throw new UnsupportedOperationException("getMetaData");
-
+        if (metaData == null) {
+            throw new SQLException("ResultSet closed");
+        }
+        return metaData;
     }
 
     @Override
@@ -1191,7 +1202,7 @@ public class MockResultSet implements ResultSet {
 
     }
 
-    private static class Record extends java.util.HashMap<String, String> {
+    private static class Record extends java.util.LinkedHashMap<String, String> {
 
         private Record() {
         }
@@ -1206,4 +1217,5 @@ public class MockResultSet implements ResultSet {
             return record;
         }
     }
+
 }

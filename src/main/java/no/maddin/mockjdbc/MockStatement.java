@@ -14,6 +14,8 @@ public class MockStatement implements CallableStatement {
 
     private File currentFile;
     private Properties connectionProperties;
+    private SQLWarning warnings;
+    private MockResultSet currentResultSet;
 
     public MockStatement(Properties connectionProperties, String sql) {
         this.connectionProperties = connectionProperties;
@@ -840,8 +842,8 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public boolean execute() throws SQLException {
-        throw new UnsupportedOperationException("execute");
-
+        currentResultSet = new MockResultSet(currentFile);
+        return true;
     }
 
     @Override
@@ -1039,8 +1041,8 @@ public class MockStatement implements CallableStatement {
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {
         openCurrentFile(sql);
-        return new MockResultSet(currentFile);
-
+        currentResultSet = new MockResultSet(currentFile);
+        return currentResultSet;
     }
 
     @Override
@@ -1103,13 +1105,12 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        throw new UnsupportedOperationException("getWarnings");
-
+        return warnings;
     }
 
     @Override
     public void clearWarnings() throws SQLException {
-        throw new UnsupportedOperationException("clearWarnings");
+        warnings = null;
 
     }
 
@@ -1127,8 +1128,7 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public ResultSet getResultSet() throws SQLException {
-        throw new UnsupportedOperationException("getResultSet");
-
+        return currentResultSet;
     }
 
     @Override
