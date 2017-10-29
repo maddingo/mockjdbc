@@ -8,6 +8,10 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.file.Files;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,7 +24,7 @@ public class MockResultSet implements ResultSet {
     private Record currentRecord;
     private MockResultSetMetaData metaData;
 
-    public MockResultSet(File csvFile) throws SQLException {
+    MockResultSet(File csvFile) throws SQLException {
         this.csvFile = csvFile;
         try (Stream<String> stringStream = Files.lines(csvFile.toPath())) {
             this.lines = stringStream.collect(Collectors.toList()).iterator();
@@ -69,11 +73,7 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        if (currentRecord == null) {
-            throw new SQLException("No valid result set");
-        }
-
-        return currentRecord.get(metaData.getColumnName(columnIndex));
+        return check(currentRecord).get(metaData.getColumnName(columnIndex));
     }
 
     @Override
@@ -123,19 +123,17 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public Date getDate(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getDate");
-
+        return getDate(metaData.getColumnLabel(columnIndex));
     }
 
     @Override
     public Time getTime(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getTime");
+        return getTime(metaData.getColumnLabel(columnIndex));
     }
 
     @Override
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getTimestamp");
-
+        return getTimestamp(metaData.getColumnLabel(columnIndex));
     }
 
     @Override
@@ -158,7 +156,7 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        String result = currentRecord.get(columnLabel);
+        String result = check(currentRecord).get(columnLabel);
         if (result == null) {
             throw new SQLException("No Result for column: " + columnLabel);
         }
@@ -173,37 +171,44 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public byte getByte(String columnLabel) throws SQLException {
-        String val = currentRecord.get(columnLabel);
+        String val = check(currentRecord).get(columnLabel);
         return Byte.parseByte(val);
     }
 
     @Override
     public short getShort(String columnLabel) throws SQLException {
-        String val = currentRecord.get(columnLabel);
+        String val = check(currentRecord).get(columnLabel);
         return Short.parseShort(val);
     }
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
-        String val = currentRecord.get(columnLabel);
+        String val = check(currentRecord).get(columnLabel);
         return Integer.parseInt(val);
     }
 
     @Override
     public long getLong(String columnLabel) throws SQLException {
-        String val = currentRecord.get(columnLabel);
+        String val = check(currentRecord).get(columnLabel);
         return Long.parseLong(val);
+    }
+
+    private Record check(Record record) throws SQLException {
+        if (record == null) {
+            throw new SQLException("No current record");
+        }
+        return record;
     }
 
     @Override
     public float getFloat(String columnLabel) throws SQLException {
-        String val = currentRecord.get(columnLabel);
+        String val = check(currentRecord).get(columnLabel);
         return Float.parseFloat(val);
     }
 
     @Override
     public double getDouble(String columnLabel) throws SQLException {
-        String val = currentRecord.get(columnLabel);
+        String val = check(currentRecord).get(columnLabel);
         return Double.parseDouble(val);
     }
 
@@ -221,20 +226,23 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public Date getDate(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("getDate");
-
+        String val = check(currentRecord).get(columnLabel);
+        LocalDate ld = LocalDate.parse(val, DateTimeFormatter.ISO_DATE);
+        return Date.valueOf(ld);
     }
 
     @Override
     public Time getTime(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("getTime");
-
+        String val = check(currentRecord).get(columnLabel);
+        LocalTime lt = LocalTime.parse(val, DateTimeFormatter.ISO_TIME);
+        return Time.valueOf(lt);
     }
 
     @Override
     public Timestamp getTimestamp(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("getTimestamp");
-
+        String val = check(currentRecord).get(columnLabel);
+        LocalDateTime ldt = LocalDateTime.parse(val, DateTimeFormatter.ISO_DATE_TIME);
+        return Timestamp.valueOf(ldt);
     }
 
     @Override
@@ -318,7 +326,7 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
-        String val = currentRecord.get(columnLabel);
+        String val = check(currentRecord).get(columnLabel);
         return BigDecimal.valueOf(Double.parseDouble(val));
     }
 

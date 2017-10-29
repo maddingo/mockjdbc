@@ -2,23 +2,62 @@ package no.maddin.mockjdbc;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 class MockResultSetMetaData implements ResultSetMetaData {
 
-    public static final int DEFAULT_COLUMN_PRECISION = 60;
-    private static final int DEFAULT_COLUMN_SCALE = 0;
-    private static final String DEFAULT_COLUMN_TYPENAME = "varchar";
-    private final String[] columnNames;
-    private final String tableName;
+    private enum DataType {
+        VARCHAR(Types.VARCHAR),
+        INTEGER(Types.INTEGER),
+        DOUBLE(Types.DOUBLE),
+        DATE(Types.DATE),
+        TIME(Types.TIME),
+        TIMESTAMP(Types.TIMESTAMP);
 
-    public MockResultSetMetaData(String tableName, String headerLine) {
-        columnNames = headerLine.split("\\s*,\\s*");
+        private final int sqlType;
+
+        DataType(int sqlType) {
+            this.sqlType = sqlType;
+        }
+
+        public static DataType fromString(String spec) {
+            return valueOf(spec.toUpperCase());
+        }
+    }
+
+    private static final int DEFAULT_COLUMN_PRECISION = 60;
+    private static final int DEFAULT_COLUMN_SCALE = 0;
+    private final String tableName;
+    private final String[] columnNames;
+    private final LinkedHashMap<String, DataType> columnTypes = new LinkedHashMap<>();
+
+    MockResultSetMetaData(String tableName, String headerLine) {
+        String[] columnSpecs = headerLine.split("\\s*,\\s*");
+        for (String columnSpec : columnSpecs) {
+            String[] specElems = Objects.requireNonNull(columnSpec, "Header must be specified").split("\\s*\\|\\s*");
+            DataType dt;
+            switch(specElems.length) {
+                case 1:
+                    dt = DataType.VARCHAR;
+                    break;
+                case 2:
+                    dt = DataType.fromString(specElems[1]);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown column spec: " + columnSpec);
+            }
+            columnTypes.put(specElems[0], dt);
+        }
+        columnNames = columnTypes.keySet().toArray(new String[0]);
         this.tableName = tableName;
     }
 
     @Override
     public int getColumnCount() throws SQLException {
-        return columnNames.length;
+        return columnTypes.size();
     }
 
     @Override
@@ -101,13 +140,12 @@ class MockResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public int getColumnType(int column) throws SQLException {
-        throw new UnsupportedOperationException("getColumnType");
-
+        return columnTypes.get(columnNames[column-1]).sqlType;
     }
 
     @Override
     public String getColumnTypeName(int column) throws SQLException {
-        return DEFAULT_COLUMN_TYPENAME;
+        return columnTypes.get(columnNames[column-1]).name();
     }
 
     @Override
