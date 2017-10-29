@@ -1,8 +1,12 @@
 # mockjdbc
 Mock JDBC Driver reading data from a text file.
 
-Available on Maven Central: [![Maven Central](https://img.shields.io/maven-central/v/no.maddin.mockjdbc/mock-jdbc.svg?style=flat-square)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22mock-jdbc%22%20g%3A%22no.maddin.mockjdbc%22)
+Available on Maven Central: [![Maven Central](https://img.shields.io/maven-central/v/no.maddin.mockjdbc/mock-jdbc.svg?style=plastic)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22mock-jdbc%22%20g%3A%22no.maddin.mockjdbc%22)
 
-Build status: [![Travis](https://img.shields.io/travis/maddingo/mockjdbc.svg?style=flat-square)](https://travis-ci.org/maddingo/mockjdbc)
+Sonatype Snapshots: [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/oss.sonatype.org/no.maddin.mockjdbc/mock-jdbc.svg?style=plastic)](https://oss.sonatype.org/#nexus-search;gav~no.maddin.mockjdbc~mock-jdbc~~~)
+
+Build status: [![Travis](https://img.shields.io/travis/maddingo/mockjdbc.svg?style=plastic)](https://travis-ci.org/maddingo/mockjdbc)
 
 Documentation: https://maddingo.github.io/mockjdbc/
+
+
