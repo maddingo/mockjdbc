@@ -17,7 +17,7 @@ public class MockStatement implements CallableStatement {
     private SQLWarning warnings;
     private MockResultSet currentResultSet;
 
-    public MockStatement(Properties connectionProperties, String sql) {
+    MockStatement(Properties connectionProperties, String sql) {
         this.connectionProperties = connectionProperties;
         if (sql != null) {
             openCurrentFile(sql);
@@ -884,7 +884,7 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        throw new UnsupportedOperationException("getMetaData");
+        return null;
 
     }
 
