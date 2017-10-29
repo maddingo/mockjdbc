@@ -83,50 +83,42 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public byte getByte(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getByte");
-
+        return getByte(metaData.getColumnLabel(columnIndex));
     }
 
     @Override
     public short getShort(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getShort");
-
+        return getShort(metaData.getColumnLabel(columnIndex));
     }
 
     @Override
     public int getInt(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getInt");
-
+        return getInt(metaData.getColumnLabel(columnIndex));
     }
 
     @Override
     public long getLong(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getLong");
-
+        return getLong(metaData.getColumnLabel(columnIndex));
     }
 
     @Override
     public float getFloat(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getFloat");
-
+        return getFloat(metaData.getColumnLabel(columnIndex));
     }
 
     @Override
     public double getDouble(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getDouble");
-
+        return getDouble(metaData.getColumnLabel(columnIndex));
     }
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException {
         throw new UnsupportedOperationException("getBigDecimal");
-
     }
 
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
         throw new UnsupportedOperationException("getBytes");
-
     }
 
     @Override
@@ -138,7 +130,6 @@ public class MockResultSet implements ResultSet {
     @Override
     public Time getTime(int columnIndex) throws SQLException {
         throw new UnsupportedOperationException("getTime");
-
     }
 
     @Override
@@ -182,38 +173,38 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public byte getByte(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("getByte");
-
+        String val = currentRecord.get(columnLabel);
+        return Byte.parseByte(val);
     }
 
     @Override
     public short getShort(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("getShort");
-
+        String val = currentRecord.get(columnLabel);
+        return Short.parseShort(val);
     }
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("getInt");
-
+        String val = currentRecord.get(columnLabel);
+        return Integer.parseInt(val);
     }
 
     @Override
     public long getLong(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("getLong");
-
+        String val = currentRecord.get(columnLabel);
+        return Long.parseLong(val);
     }
 
     @Override
     public float getFloat(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("getFloat");
-
+        String val = currentRecord.get(columnLabel);
+        return Float.parseFloat(val);
     }
 
     @Override
     public double getDouble(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("getDouble");
-
+        String val = currentRecord.get(columnLabel);
+        return Double.parseDouble(val);
     }
 
     @Override
@@ -322,14 +313,13 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getBigDecimal");
-
+        return getBigDecimal(metaData.getColumnLabel(columnIndex));
     }
 
     @Override
     public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("getBigDecimal");
-
+        String val = currentRecord.get(columnLabel);
+        return BigDecimal.valueOf(Double.parseDouble(val));
     }
 
     @Override
