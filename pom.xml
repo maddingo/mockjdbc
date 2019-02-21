@@ -176,7 +176,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.6</version>
+                    <version>3.7.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -215,11 +215,8 @@
                         <goals>
                             <goal>site</goal>
                         </goals>
-                        <!-- select the Maven phase in which the plugin will be executed -->
                         <phase>site-deploy</phase>
                         <configuration>
-                            <!-- Plugin configuration ges here -->
-
                             <server>github</server>
 
                             <!-- The commit message -->
