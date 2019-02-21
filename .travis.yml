@@ -6,7 +6,7 @@ addons:
     organization: "maddingo-github"
 
 script:
-  - jdk_switcher use oraclejdk9
+  - jdk_switcher use openjdk11
   - MAVEN_OPTS="--add-modules ALL-SYSTEM" mvn clean verify
   - jdk_switcher use oraclejdk8
   - mvn clean install sonar:sonar
