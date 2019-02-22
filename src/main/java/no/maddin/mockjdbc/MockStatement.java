@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MockStatement implements CallableStatement {
 
@@ -16,6 +17,7 @@ public class MockStatement implements CallableStatement {
     private Properties connectionProperties;
     private SQLWarning warnings;
     private MockResultSet currentResultSet;
+    private AtomicBoolean isClosed = new AtomicBoolean(true);
 
     MockStatement(Properties connectionProperties, String sql) {
         this.connectionProperties = connectionProperties;
@@ -29,6 +31,7 @@ public class MockStatement implements CallableStatement {
             throw new IllegalArgumentException("file already set");
         }
         currentFile = new File(connectionProperties.getProperty("path"), DriverTool.fileName(sql) + ".csv");
+        isClosed.set(false);
     }
 
     @Override
@@ -1053,6 +1056,10 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public void close() throws SQLException {
+        if (currentFile != null) {
+            currentFile = null;
+        }
+        isClosed.set(true);
     }
 
     @Override
@@ -1259,8 +1266,7 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public boolean isClosed() throws SQLException {
-        throw new UnsupportedOperationException("isClosed");
-
+        return isClosed.get();
     }
 
     @Override

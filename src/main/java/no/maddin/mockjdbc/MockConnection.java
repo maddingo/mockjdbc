@@ -81,7 +81,7 @@ public class MockConnection implements Connection {
 
     @Override
     public boolean isClosed() throws SQLException {
-        return currentStatement == null;
+        return currentStatement == null || currentStatement.isClosed();
     }
 
     @Override
@@ -195,8 +195,8 @@ public class MockConnection implements Connection {
         if (resultSetHoldability != ResultSet.CLOSE_CURSORS_AT_COMMIT) {
             throw new SQLException("Unsupported resultSetHoldability " + resultSetHoldability);
         }
-        if (currentStatement != null) {
-            throw new SQLException("previous connection not closed");
+        if (currentStatement != null && !currentStatement.isClosed()) {
+            throw new SQLException("previous statement not closed");
         }
         currentStatement = new MockStatement(connectionProperties, null);
         return currentStatement;
@@ -213,7 +213,7 @@ public class MockConnection implements Connection {
         if (resultSetHoldability != ResultSet.CLOSE_CURSORS_AT_COMMIT) {
             throw new SQLException("Unsupported resultSetHoldability " + resultSetHoldability);
         }
-        if (currentStatement != null) {
+        if (currentStatement != null && !currentStatement.isClosed()) {
             throw new SQLException("previous connection not closed");
         }
         currentStatement = new MockStatement(connectionProperties, sql);
