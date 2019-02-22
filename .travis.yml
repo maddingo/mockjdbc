@@ -5,8 +5,9 @@ addons:
   sonarcloud:
     organization: "maddingo-github"
 
-script:
-  - jdk_switcher use openjdk11
-  - MAVEN_OPTS="--add-modules ALL-SYSTEM" mvn clean verify
-  - jdk_switcher use oraclejdk8
-  - mvn clean install sonar:sonar
+matrix:
+  include:
+    - jdk: openjdk11
+      script: MAVEN_OPTS="--add-modules ALL-SYSTEM" mvn clean install sonar:sonar
+    - jdk: ooraclejdk8
+      script: mvn clean test
