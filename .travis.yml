@@ -9,5 +9,5 @@ matrix:
   include:
     - jdk: openjdk11
       script: MAVEN_OPTS="--add-modules ALL-SYSTEM" mvn clean install sonar:sonar
-    - jdk: oraclejdk8
+    - jdk: openjdk8
       script: mvn clean test
