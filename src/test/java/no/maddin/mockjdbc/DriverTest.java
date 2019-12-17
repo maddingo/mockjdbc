@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
@@ -34,4 +35,12 @@ class DriverTest {
         assertThat(((MockConnection)connection).getConnectionProperties(), hasKey("repeat"));
     }
 
+    @Test
+    void driverConnectionWithOtherUrl() throws Exception {
+        try (Connection con = DriverManager.getConnection("jdbc:oracle:thin:@//localhost:1521/orcl")) {
+            assertThat(con, is(notNullValue()));
+        } catch (Exception ex) {
+            assertThat(ex, hasProperty("message", containsString("not accepted")));
+        }
+    }
 }

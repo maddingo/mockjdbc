@@ -22,6 +22,9 @@ public class Driver implements java.sql.Driver {
     }
 
     public Connection connect(String url, Properties info) throws SQLException {
+        if (!acceptsURL(url)) {
+            throw new SQLException(url + " not accepted by " + this.getClass().getName());
+        }
         return new MockConnection(url, info);
     }
 
