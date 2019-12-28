@@ -38,6 +38,7 @@ class ConnectionTest {
             return new ConnectionCall(methodName, args);
         }
 
+        @SuppressWarnings("unchecked")
         private T createObject(S srcObject) throws SQLException {
                 Class[] argTypes = Stream.of(args)
                     .map(o -> {

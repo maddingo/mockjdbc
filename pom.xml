@@ -132,6 +132,13 @@
             <version>3.10.0</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.5.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -181,7 +188,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.9</version>
+                    <version>0.8.5</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -233,7 +240,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>${surefireArgLine}</argLine>
+                    <argLine>@{surefireArgLine}</argLine>
                 </configuration>
             </plugin>
 
@@ -243,9 +250,10 @@
                 <executions>
                     <execution>
                         <id>prepare-unit-test-coverage</id>
+                        <phase>test-compile</phase>
                         <goals><goal>prepare-agent</goal></goals>
                         <configuration>
-                            <destFile>${project.build.directory}/jacoco.exec</destFile>
+                            <destFile>${project.build.testOutputDirectory}/jacoco.exec</destFile>
                             <propertyName>surefireArgLine</propertyName>
                         </configuration>
                     </execution>
@@ -257,7 +265,7 @@
                         </goals>
                         <configuration>
                             <!-- Sets the path to the file which contains the execution data. -->
-                            <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+                            <dataFile>${project.build.testOutputDirectory}/jacoco.exec</dataFile>
                             <!-- Sets the output directory for the code coverage report. -->
                             <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
                         </configuration>
