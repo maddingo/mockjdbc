@@ -22,6 +22,8 @@ import org.junit.platform.commons.util.ExceptionUtils;
 class ConnectionTest {
 
     private static final String SELECT_A_B_FROM_MYTABLE = "select a, b from mytable";
+    private static final String TRUNCATE_MYTABLE = "truncate mytable";
+    
     private static File origPath;
     private static File checkPath;
 
@@ -61,7 +63,7 @@ class ConnectionTest {
         }
     }
 
-    private static Stream<Arguments> data() {
+    private static Stream<Arguments> dataWithResultSet() {
 
         return Stream.of(
             Arguments.of(
@@ -107,18 +109,11 @@ class ConnectionTest {
 
 
     /**
-     *     public String testName;
-
-     public ConnectionCall<Connection, Statement> createStatementCall;
-
-     public ConnectionCall<Statement, ResultSet> createResultSetCall;
-
-
      * This test reads a test database, writes the result to a file and re-reads the result and compares the results.
      */
-    @DisplayName("Connection Tests")
+    @DisplayName("Connection Tests with ResultSet")
     @ParameterizedTest(name = "{index} {0}")
-    @MethodSource("data")
+    @MethodSource("dataWithResultSet")
     void connectionTest(
         String testName,
         ConnectionCall<Connection, Statement> createStatementCall,
@@ -159,5 +154,59 @@ class ConnectionTest {
             }
         }
         assertThat(map.entrySet(), is(not(empty())));
+    }
+
+    private static Stream<Arguments> dataWithBooleanResult() {
+
+        return Stream.of(
+                Arguments.of(
+                        "execute(String)",
+                        ConnectionCall.create("createStatement"),
+                        ConnectionCall.create("execute", TRUNCATE_MYTABLE),
+                        Boolean.FALSE
+                ),
+                Arguments.of(
+                        "execute()",
+                        ConnectionCall.create("prepareStatement", TRUNCATE_MYTABLE),
+                        ConnectionCall.create("execute"),
+                        Boolean.FALSE
+                ),
+                Arguments.of(
+                        "execute(String, int)",
+                        ConnectionCall.create("createStatement"),
+                        ConnectionCall.create("execute", TRUNCATE_MYTABLE, Statement.NO_GENERATED_KEYS),
+                        Boolean.FALSE
+                ),
+                Arguments.of(
+                        "execute(String, int[])",
+                        ConnectionCall.create("createStatement"),
+                        ConnectionCall.create("execute", TRUNCATE_MYTABLE, new int[0]),
+                        Boolean.FALSE
+                ),
+                Arguments.of(
+                        "execute(String, String[])",
+                        ConnectionCall.create("createStatement"),
+                        ConnectionCall.create("execute", TRUNCATE_MYTABLE, new String[0]),
+                        Boolean.FALSE
+                )
+        );
+    }
+
+    @DisplayName("Connection Tests with ResultSet")
+    @ParameterizedTest(name = "{index} {0}")
+    @MethodSource("dataWithBooleanResult")
+    void connectionBoolean(
+        String testName,
+        ConnectionCall<Connection, Statement> createStatementCall,
+        ConnectionCall<Statement, Boolean> executeCall,
+        Boolean expectedResult
+    ) throws Exception {
+        try (
+                Connection con = DriverManager.getConnection("jdbc:mock:csv;path=" + origPath.getAbsolutePath());
+                Statement st = createStatementCall.createObject(con)
+        ) {
+            Boolean result = executeCall.createObject(st);
+            assertThat(result, is(equalTo(expectedResult)));
+        }
     }
 }

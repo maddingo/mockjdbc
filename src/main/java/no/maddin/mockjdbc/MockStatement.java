@@ -845,8 +845,13 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public boolean execute() throws SQLException {
-        currentResultSet = new MockResultSet(currentFile);
-        return true;
+        if (currentFile.exists()) {
+            currentResultSet = new MockResultSet(currentFile);
+            return true;
+        } else {
+            currentResultSet = null;
+            return false;
+        }
     }
 
     @Override
