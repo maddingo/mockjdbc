@@ -1,0 +1,1389 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MockConnection.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mock-jdbc</a> &gt; <a href="index.source.html" class="el_package">no.maddin.mockjdbc</a> &gt; <span class="el_source">MockConnection.java</span></div><h1>MockConnection.java</h1><pre class="source lang-java linenums">package no.maddin.mockjdbc;
+
+import java.sql.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.Executor;
+
+public class MockConnection implements Connection {
+<span class="fc" id="L10">    private static final Properties EMPTY_PROPERTIES = new Properties();</span>
+<span class="fc" id="L11">    private final Properties connectionProperties = new Properties();</span>
+    private final String url;
+    private Statement currentStatement;
+    private final MockDatabaseMetaData metadata;
+
+<span class="fc" id="L16">    public MockConnection(String url, Properties info) {</span>
+<span class="fc" id="L17">        this.url = url;</span>
+<span class="fc" id="L18">        addPropsFromUrl(url);</span>
+<span class="fc" id="L19">        this.connectionProperties.putAll(info);</span>
+<span class="fc" id="L20">        this.metadata = new MockDatabaseMetaData();</span>
+<span class="fc" id="L21">        metadata.setURL(url);</span>
+<span class="fc" id="L22">    }</span>
+
+    private void addPropsFromUrl(String url) {
+<span class="fc" id="L25">        int propSeparator = url.indexOf(';');</span>
+<span class="fc" id="L26">        String[] propPairs = url.substring(propSeparator + 1).split(&quot;\\s*,\\s*&quot;);</span>
+
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        for (String propPair : propPairs) {</span>
+<span class="fc" id="L29">            String[] keyValue = propPair.split(&quot;\\s*=\\s*&quot;);</span>
+<span class="fc" id="L30">            connectionProperties.put(keyValue[0], keyValue[1]);</span>
+        }
+<span class="fc" id="L32">    }</span>
+
+    @Override
+    public Statement createStatement() throws SQLException {
+<span class="fc" id="L36">        return createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);</span>
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql) throws SQLException {
+<span class="fc" id="L41">        return prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);</span>
+    }
+
+    @Override
+    public CallableStatement prepareCall(String sql) throws SQLException {
+<span class="nc" id="L46">        throw new UnsupportedOperationException(&quot;prepareCall(String)&quot;);</span>
+    }
+
+    @Override
+    public String nativeSQL(String sql) throws SQLException {
+<span class="nc" id="L51">        throw new UnsupportedOperationException(&quot;nativeSQL(String)&quot;);</span>
+    }
+
+    @Override
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
+        // do nothing
+<span class="nc" id="L57">    }</span>
+
+    @Override
+    public boolean getAutoCommit() throws SQLException {
+<span class="nc" id="L61">        throw new UnsupportedOperationException(&quot;getAutoCommit()&quot;);</span>
+    }
+
+    @Override
+    public void commit() throws SQLException {
+<span class="nc" id="L66">        throw new UnsupportedOperationException(&quot;commit()&quot;);</span>
+    }
+
+    @Override
+    public void rollback() throws SQLException {
+<span class="nc" id="L71">        throw new UnsupportedOperationException(&quot;rollback()&quot;);</span>
+    }
+
+    @Override
+    public void close() throws SQLException {
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        if (currentStatement != null) {</span>
+<span class="fc" id="L77">            currentStatement.close();</span>
+<span class="fc" id="L78">            currentStatement = null;</span>
+        }
+<span class="fc" id="L80">    }</span>
+
+    @Override
+    public boolean isClosed() throws SQLException {
+<span class="nc bnc" id="L84" title="All 4 branches missed.">        return currentStatement == null || currentStatement.isClosed();</span>
+    }
+
+    @Override
+    public DatabaseMetaData getMetaData() throws SQLException {
+<span class="fc" id="L89">        return metadata;</span>
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) throws SQLException {
+<span class="nc" id="L94">        throw new UnsupportedOperationException(&quot;setReadOnly&quot;);</span>
+    }
+
+    @Override
+    public boolean isReadOnly() throws SQLException {
+<span class="nc" id="L99">        return true;</span>
+    }
+
+    @Override
+    public void setCatalog(String catalog) throws SQLException {
+<span class="nc" id="L104">        throw new UnsupportedOperationException(&quot;setCatalog(String)&quot;);</span>
+    }
+
+    @Override
+    public String getCatalog() throws SQLException {
+<span class="nc" id="L109">        throw new UnsupportedOperationException(&quot;getCatalog()&quot;);</span>
+    }
+
+    @Override
+    public void setTransactionIsolation(int level) throws SQLException {
+<span class="nc" id="L114">        throw new UnsupportedOperationException(&quot;steTransactionIsolation(int)&quot;);</span>
+    }
+
+    @Override
+    public int getTransactionIsolation() throws SQLException {
+<span class="nc" id="L119">        throw new UnsupportedOperationException(&quot;getTransactionIsolation&quot;);</span>
+    }
+
+    @Override
+    public SQLWarning getWarnings() throws SQLException {
+<span class="nc" id="L124">        throw new UnsupportedOperationException(&quot;getWarnings&quot;);</span>
+    }
+
+    @Override
+    public void clearWarnings() throws SQLException {
+<span class="nc" id="L129">        throw new UnsupportedOperationException(&quot;clearWarnings&quot;);</span>
+    }
+
+    @Override
+    public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
+<span class="fc" id="L134">        return createStatement(resultSetType, resultSetConcurrency, ResultSet.CLOSE_CURSORS_AT_COMMIT);</span>
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+<span class="fc" id="L139">        return prepareStatement(sql, resultSetType, resultSetConcurrency, ResultSet.CLOSE_CURSORS_AT_COMMIT);</span>
+    }
+
+    @Override
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+<span class="nc" id="L144">        throw new UnsupportedOperationException(&quot;prepareCall(String,int,int)&quot;);</span>
+    }
+
+    @Override
+    public Map&lt;String, Class&lt;?&gt;&gt; getTypeMap() throws SQLException {
+<span class="nc" id="L149">        return Collections.emptyMap();</span>
+    }
+
+    @Override
+    public void setTypeMap(Map&lt;String, Class&lt;?&gt;&gt; map) throws SQLException {
+<span class="nc" id="L154">        throw new UnsupportedOperationException(&quot;setTypeMap(Map&lt;String,Class&lt;?&gt;&gt;)&quot;);</span>
+    }
+
+    @Override
+    public void setHoldability(int holdability) throws SQLException {
+<span class="nc" id="L159">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public int getHoldability() throws SQLException {
+<span class="nc" id="L164">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public Savepoint setSavepoint() throws SQLException {
+<span class="nc" id="L169">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public Savepoint setSavepoint(String name) throws SQLException {
+<span class="nc" id="L174">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public void rollback(Savepoint savepoint) throws SQLException {
+<span class="nc" id="L179">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+<span class="nc" id="L184">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">        if (resultSetType != ResultSet.TYPE_FORWARD_ONLY) {</span>
+<span class="nc" id="L190">            throw new SQLException(&quot;Unsupported resultSetType &quot; + resultSetType);</span>
+        }
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">        if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY) {</span>
+<span class="nc" id="L193">            throw new SQLException(&quot;Unsupported resultSetConcurrency &quot; + resultSetConcurrency);</span>
+        }
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">        if (resultSetHoldability != ResultSet.CLOSE_CURSORS_AT_COMMIT) {</span>
+<span class="nc" id="L196">            throw new SQLException(&quot;Unsupported resultSetHoldability &quot; + resultSetHoldability);</span>
+        }
+<span class="pc bpc" id="L198" title="3 of 4 branches missed.">        if (currentStatement != null &amp;&amp; !currentStatement.isClosed()) {</span>
+<span class="nc" id="L199">            throw new SQLException(&quot;previous statement not closed&quot;);</span>
+        }
+<span class="fc" id="L201">        currentStatement = new MockStatement(connectionProperties, null);</span>
+<span class="fc" id="L202">        return currentStatement;</span>
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">        if (resultSetType != ResultSet.TYPE_FORWARD_ONLY) {</span>
+<span class="nc" id="L208">            throw new SQLException(&quot;Unsupported resultSetType &quot; + resultSetType);</span>
+        }
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY) {</span>
+<span class="nc" id="L211">            throw new SQLException(&quot;Unsupported resultSetConcurrency &quot; + resultSetConcurrency);</span>
+        }
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">        if (resultSetHoldability != ResultSet.CLOSE_CURSORS_AT_COMMIT) {</span>
+<span class="nc" id="L214">            throw new SQLException(&quot;Unsupported resultSetHoldability &quot; + resultSetHoldability);</span>
+        }
+<span class="pc bpc" id="L216" title="3 of 4 branches missed.">        if (currentStatement != null &amp;&amp; !currentStatement.isClosed()) {</span>
+<span class="nc" id="L217">            throw new SQLException(&quot;previous connection not closed&quot;);</span>
+        }
+<span class="fc" id="L219">        currentStatement = new MockStatement(connectionProperties, sql);</span>
+
+<span class="fc" id="L221">        return (PreparedStatement)currentStatement;</span>
+    }
+
+    @Override
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+<span class="nc" id="L226">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
+<span class="nc" id="L231">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
+<span class="nc" id="L236">        throw new UnsupportedOperationException(&quot;prepareStatement(String, int[])&quot;);</span>
+    }
+
+    @Override
+    public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
+<span class="nc" id="L241">        throw new UnsupportedOperationException(&quot;prepare(String,String[])&quot;);</span>
+    }
+
+    @Override
+    public Clob createClob() throws SQLException {
+<span class="nc" id="L246">        throw new UnsupportedOperationException(&quot;createClob()&quot;);</span>
+    }
+
+    @Override
+    public Blob createBlob() throws SQLException {
+<span class="nc" id="L251">        throw new UnsupportedOperationException(&quot;createBlob()&quot;);</span>
+    }
+
+    @Override
+    public NClob createNClob() throws SQLException {
+<span class="nc" id="L256">        throw new UnsupportedOperationException(&quot;createNClob()&quot;);</span>
+    }
+
+    @Override
+    public SQLXML createSQLXML() throws SQLException {
+<span class="nc" id="L261">        throw new UnsupportedOperationException(&quot;createSQLXML()&quot;);</span>
+    }
+
+    @Override
+    public boolean isValid(int timeout) throws SQLException {
+<span class="nc" id="L266">        throw new UnsupportedOperationException(&quot;isValid()&quot;);</span>
+    }
+
+    @Override
+    public void setClientInfo(String name, String value) throws SQLClientInfoException {
+<span class="nc" id="L271">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public void setClientInfo(Properties properties) throws SQLClientInfoException {
+<span class="nc" id="L276">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public String getClientInfo(String name) throws SQLException {
+<span class="nc" id="L281">        return null;</span>
+    }
+
+    @Override
+    public Properties getClientInfo() throws SQLException {
+<span class="nc" id="L286">        return EMPTY_PROPERTIES;</span>
+    }
+
+    @Override
+    public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
+<span class="nc" id="L291">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
+<span class="nc" id="L296">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public void setSchema(String schema) throws SQLException {
+<span class="nc" id="L301">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public String getSchema() throws SQLException {
+<span class="nc" id="L306">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public void abort(Executor executor) throws SQLException {
+<span class="nc" id="L311">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+<span class="nc" id="L316">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public int getNetworkTimeout() throws SQLException {
+<span class="nc" id="L321">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public &lt;T&gt; T unwrap(Class&lt;T&gt; iface) throws SQLException {
+<span class="nc" id="L326">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    @Override
+    public boolean isWrapperFor(Class&lt;?&gt; iface) throws SQLException {
+<span class="nc" id="L331">        throw new UnsupportedOperationException(&quot;not yet&quot;);</span>
+    }
+
+    public Properties getConnectionProperties() {
+<span class="fc" id="L335">        return connectionProperties;</span>
+    }
+
+    private static class MockDatabaseMetaData implements DatabaseMetaData {
+
+        private String url;
+
+        @Override
+        public boolean allProceduresAreCallable() throws SQLException {
+<span class="nc" id="L344">            return false;</span>
+        }
+
+        @Override
+        public boolean allTablesAreSelectable() throws SQLException {
+<span class="nc" id="L349">            return true;</span>
+        }
+
+        private void setURL(String url) {
+<span class="fc" id="L353">            this.url = url;</span>
+<span class="fc" id="L354">        }</span>
+        @Override
+        public String getURL() throws SQLException {
+<span class="fc" id="L357">            return url;</span>
+        }
+
+        @Override
+        public String getUserName() throws SQLException {
+<span class="nc" id="L362">            return &quot;&quot;;</span>
+        }
+
+        @Override
+        public boolean isReadOnly() throws SQLException {
+<span class="nc" id="L367">            return true;</span>
+        }
+
+        @Override
+        public boolean nullsAreSortedHigh() throws SQLException {
+<span class="nc" id="L372">            return false;</span>
+        }
+
+        @Override
+        public boolean nullsAreSortedLow() throws SQLException {
+<span class="nc" id="L377">            return true;</span>
+        }
+
+        @Override
+        public boolean nullsAreSortedAtStart() throws SQLException {
+<span class="nc" id="L382">            return true;</span>
+        }
+
+        @Override
+        public boolean nullsAreSortedAtEnd() throws SQLException {
+<span class="nc" id="L387">            return false;</span>
+        }
+
+        @Override
+        public String getDatabaseProductName() throws SQLException {
+<span class="nc" id="L392">            return &quot;Mock Database&quot;;</span>
+
+        }
+
+        @Override
+        public String getDatabaseProductVersion() throws SQLException {
+<span class="nc" id="L398">            return &quot;0.1&quot;;</span>
+        }
+
+        @Override
+        public String getDriverName() throws SQLException {
+<span class="nc" id="L403">            return &quot;MockDriver&quot;;</span>
+
+        }
+
+        @Override
+        public String getDriverVersion() throws SQLException {
+<span class="nc" id="L409">            return &quot;0.1&quot;;</span>
+
+        }
+
+        @Override
+        public int getDriverMajorVersion() {
+<span class="nc" id="L415">            return 1;</span>
+
+        }
+
+        @Override
+        public int getDriverMinorVersion() {
+<span class="nc" id="L421">            return 0;</span>
+        }
+
+        @Override
+        public boolean usesLocalFiles() throws SQLException {
+<span class="nc" id="L426">            return true;</span>
+        }
+
+        @Override
+        public boolean usesLocalFilePerTable() throws SQLException {
+<span class="nc" id="L431">            return true;</span>
+        }
+
+        @Override
+        public boolean supportsMixedCaseIdentifiers() throws SQLException {
+<span class="nc" id="L436">            return false;</span>
+
+        }
+
+        @Override
+        public boolean storesUpperCaseIdentifiers() throws SQLException {
+<span class="nc" id="L442">            throw new UnsupportedOperationException(&quot;storesUpperCaseIdentifiers&quot;);</span>
+
+        }
+
+        @Override
+        public boolean storesLowerCaseIdentifiers() throws SQLException {
+<span class="nc" id="L448">            throw new UnsupportedOperationException(&quot;storesLowerCaseIdentifiers&quot;);</span>
+
+        }
+
+        @Override
+        public boolean storesMixedCaseIdentifiers() throws SQLException {
+<span class="nc" id="L454">            throw new UnsupportedOperationException(&quot;storesMixedCaseIdentifiers&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsMixedCaseQuotedIdentifiers() throws SQLException {
+<span class="nc" id="L460">            throw new UnsupportedOperationException(&quot;supportsMixedCaseQuotedIdentifiers&quot;);</span>
+
+        }
+
+        @Override
+        public boolean storesUpperCaseQuotedIdentifiers() throws SQLException {
+<span class="nc" id="L466">            throw new UnsupportedOperationException(&quot;storesUpperCaseQuotedIdentifiers&quot;);</span>
+
+        }
+
+        @Override
+        public boolean storesLowerCaseQuotedIdentifiers() throws SQLException {
+<span class="nc" id="L472">            throw new UnsupportedOperationException(&quot;storesLowerCaseQuotedIdentifiers&quot;);</span>
+
+        }
+
+        @Override
+        public boolean storesMixedCaseQuotedIdentifiers() throws SQLException {
+<span class="nc" id="L478">            throw new UnsupportedOperationException(&quot;storesMixedCaseQuotedIdentifiers&quot;);</span>
+
+        }
+
+        @Override
+        public String getIdentifierQuoteString() throws SQLException {
+<span class="nc" id="L484">            throw new UnsupportedOperationException(&quot;getIdentifierQuoteString&quot;);</span>
+
+        }
+
+        @Override
+        public String getSQLKeywords() throws SQLException {
+<span class="nc" id="L490">            throw new UnsupportedOperationException(&quot;getSQLKeywords&quot;);</span>
+
+        }
+
+        @Override
+        public String getNumericFunctions() throws SQLException {
+<span class="nc" id="L496">            throw new UnsupportedOperationException(&quot;getNumericFunctions&quot;);</span>
+
+        }
+
+        @Override
+        public String getStringFunctions() throws SQLException {
+<span class="nc" id="L502">            throw new UnsupportedOperationException(&quot;getStringFunctions&quot;);</span>
+
+        }
+
+        @Override
+        public String getSystemFunctions() throws SQLException {
+<span class="nc" id="L508">            throw new UnsupportedOperationException(&quot;getSystemFunctions&quot;);</span>
+
+        }
+
+        @Override
+        public String getTimeDateFunctions() throws SQLException {
+<span class="nc" id="L514">            throw new UnsupportedOperationException(&quot;getTimeDateFunctions&quot;);</span>
+
+        }
+
+        @Override
+        public String getSearchStringEscape() throws SQLException {
+<span class="nc" id="L520">            throw new UnsupportedOperationException(&quot;getSearchStringEscape&quot;);</span>
+
+        }
+
+        @Override
+        public String getExtraNameCharacters() throws SQLException {
+<span class="nc" id="L526">            throw new UnsupportedOperationException(&quot;getExtraNameCharacters&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsAlterTableWithAddColumn() throws SQLException {
+<span class="nc" id="L532">            throw new UnsupportedOperationException(&quot;supportsAlterTableWithAddColumn&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsAlterTableWithDropColumn() throws SQLException {
+<span class="nc" id="L538">            throw new UnsupportedOperationException(&quot;supportsAlterTableWithDropColumn&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsColumnAliasing() throws SQLException {
+<span class="nc" id="L544">            throw new UnsupportedOperationException(&quot;supportsColumnAliasing&quot;);</span>
+
+        }
+
+        @Override
+        public boolean nullPlusNonNullIsNull() throws SQLException {
+<span class="nc" id="L550">            throw new UnsupportedOperationException(&quot;nullPlusNonNullIsNull&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsConvert() throws SQLException {
+<span class="nc" id="L556">            throw new UnsupportedOperationException(&quot;supportsConvert&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsConvert(int fromType, int toType) throws SQLException {
+<span class="nc" id="L562">            throw new UnsupportedOperationException(&quot;supportsConvert&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsTableCorrelationNames() throws SQLException {
+<span class="nc" id="L568">            throw new UnsupportedOperationException(&quot;supportsTableCorrelationNames&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsDifferentTableCorrelationNames() throws SQLException {
+<span class="nc" id="L574">            throw new UnsupportedOperationException(&quot;supportsDifferentTableCorrelationNames&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsExpressionsInOrderBy() throws SQLException {
+<span class="nc" id="L580">            throw new UnsupportedOperationException(&quot;supportsExpressionsInOrderBy&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsOrderByUnrelated() throws SQLException {
+<span class="nc" id="L586">            throw new UnsupportedOperationException(&quot;supportsOrderByUnrelated&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsGroupBy() throws SQLException {
+<span class="nc" id="L592">            throw new UnsupportedOperationException(&quot;supportsGroupBy&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsGroupByUnrelated() throws SQLException {
+<span class="nc" id="L598">            throw new UnsupportedOperationException(&quot;supportsGroupByUnrelated&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsGroupByBeyondSelect() throws SQLException {
+<span class="nc" id="L604">            throw new UnsupportedOperationException(&quot;supportsGroupByBeyondSelect&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsLikeEscapeClause() throws SQLException {
+<span class="nc" id="L610">            throw new UnsupportedOperationException(&quot;supportsLikeEscapeClause&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsMultipleResultSets() throws SQLException {
+<span class="nc" id="L616">            throw new UnsupportedOperationException(&quot;supportsMultipleResultSets&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsMultipleTransactions() throws SQLException {
+<span class="nc" id="L622">            throw new UnsupportedOperationException(&quot;supportsMultipleTransactions&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsNonNullableColumns() throws SQLException {
+<span class="nc" id="L628">            throw new UnsupportedOperationException(&quot;supportsNonNullableColumns&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsMinimumSQLGrammar() throws SQLException {
+<span class="nc" id="L634">            throw new UnsupportedOperationException(&quot;supportsMinimumSQLGrammar&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsCoreSQLGrammar() throws SQLException {
+<span class="nc" id="L640">            throw new UnsupportedOperationException(&quot;supportsCoreSQLGrammar&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsExtendedSQLGrammar() throws SQLException {
+<span class="nc" id="L646">            throw new UnsupportedOperationException(&quot;supportsExtendedSQLGrammar&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsANSI92EntryLevelSQL() throws SQLException {
+<span class="nc" id="L652">            throw new UnsupportedOperationException(&quot;supportsANSI92EntryLevelSQL&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsANSI92IntermediateSQL() throws SQLException {
+<span class="nc" id="L658">            throw new UnsupportedOperationException(&quot;supportsANSI92IntermediateSQL&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsANSI92FullSQL() throws SQLException {
+<span class="nc" id="L664">            throw new UnsupportedOperationException(&quot;supportsANSI92FullSQL&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsIntegrityEnhancementFacility() throws SQLException {
+<span class="nc" id="L670">            throw new UnsupportedOperationException(&quot;supportsIntegrityEnhancementFacility&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsOuterJoins() throws SQLException {
+<span class="nc" id="L676">            throw new UnsupportedOperationException(&quot;supportsOuterJoins&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsFullOuterJoins() throws SQLException {
+<span class="nc" id="L682">            throw new UnsupportedOperationException(&quot;supportsFullOuterJoins&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsLimitedOuterJoins() throws SQLException {
+<span class="nc" id="L688">            throw new UnsupportedOperationException(&quot;supportsLimitedOuterJoins&quot;);</span>
+
+        }
+
+        @Override
+        public String getSchemaTerm() throws SQLException {
+<span class="nc" id="L694">            throw new UnsupportedOperationException(&quot;getSchemaTerm&quot;);</span>
+
+        }
+
+        @Override
+        public String getProcedureTerm() throws SQLException {
+<span class="nc" id="L700">            throw new UnsupportedOperationException(&quot;getProcedureTerm&quot;);</span>
+
+        }
+
+        @Override
+        public String getCatalogTerm() throws SQLException {
+<span class="nc" id="L706">            throw new UnsupportedOperationException(&quot;getCatalogTerm&quot;);</span>
+
+        }
+
+        @Override
+        public boolean isCatalogAtStart() throws SQLException {
+<span class="nc" id="L712">            throw new UnsupportedOperationException(&quot;isCatalogAtStart&quot;);</span>
+
+        }
+
+        @Override
+        public String getCatalogSeparator() throws SQLException {
+<span class="nc" id="L718">            throw new UnsupportedOperationException(&quot;getCatalogSeparator&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsSchemasInDataManipulation() throws SQLException {
+<span class="nc" id="L724">            throw new UnsupportedOperationException(&quot;supportsSchemasInDataManipulation&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsSchemasInProcedureCalls() throws SQLException {
+<span class="nc" id="L730">            throw new UnsupportedOperationException(&quot;supportsSchemasInProcedureCalls&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsSchemasInTableDefinitions() throws SQLException {
+<span class="nc" id="L736">            throw new UnsupportedOperationException(&quot;supportsSchemasInTableDefinitions&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsSchemasInIndexDefinitions() throws SQLException {
+<span class="nc" id="L742">            throw new UnsupportedOperationException(&quot;supportsSchemasInIndexDefinitions&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsSchemasInPrivilegeDefinitions() throws SQLException {
+<span class="nc" id="L748">            throw new UnsupportedOperationException(&quot;supportsSchemasInPrivilegeDefinitions&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsCatalogsInDataManipulation() throws SQLException {
+<span class="nc" id="L754">            throw new UnsupportedOperationException(&quot;supportsCatalogsInDataManipulation&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsCatalogsInProcedureCalls() throws SQLException {
+<span class="nc" id="L760">            throw new UnsupportedOperationException(&quot;supportsCatalogsInProcedureCalls&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsCatalogsInTableDefinitions() throws SQLException {
+<span class="nc" id="L766">            throw new UnsupportedOperationException(&quot;supportsCatalogsInTableDefinitions&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsCatalogsInIndexDefinitions() throws SQLException {
+<span class="nc" id="L772">            throw new UnsupportedOperationException(&quot;supportsCatalogsInIndexDefinitions&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsCatalogsInPrivilegeDefinitions() throws SQLException {
+<span class="nc" id="L778">            throw new UnsupportedOperationException(&quot;supportsCatalogsInPrivilegeDefinitions&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsPositionedDelete() throws SQLException {
+<span class="nc" id="L784">            throw new UnsupportedOperationException(&quot;supportsPositionedDelete&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsPositionedUpdate() throws SQLException {
+<span class="nc" id="L790">            throw new UnsupportedOperationException(&quot;supportsPositionedUpdate&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsSelectForUpdate() throws SQLException {
+<span class="nc" id="L796">            throw new UnsupportedOperationException(&quot;supportsSelectForUpdate&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsStoredProcedures() throws SQLException {
+<span class="nc" id="L802">            throw new UnsupportedOperationException(&quot;supportsStoredProcedures&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsSubqueriesInComparisons() throws SQLException {
+<span class="nc" id="L808">            throw new UnsupportedOperationException(&quot;supportsSubqueriesInComparisons&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsSubqueriesInExists() throws SQLException {
+<span class="nc" id="L814">            throw new UnsupportedOperationException(&quot;supportsSubqueriesInExists&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsSubqueriesInIns() throws SQLException {
+<span class="nc" id="L820">            throw new UnsupportedOperationException(&quot;supportsSubqueriesInIns&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsSubqueriesInQuantifieds() throws SQLException {
+<span class="nc" id="L826">            throw new UnsupportedOperationException(&quot;supportsSubqueriesInQuantifieds&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsCorrelatedSubqueries() throws SQLException {
+<span class="nc" id="L832">            throw new UnsupportedOperationException(&quot;supportsCorrelatedSubqueries&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsUnion() throws SQLException {
+<span class="nc" id="L838">            throw new UnsupportedOperationException(&quot;supportsUnion&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsUnionAll() throws SQLException {
+<span class="nc" id="L844">            throw new UnsupportedOperationException(&quot;supportsUnionAll&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsOpenCursorsAcrossCommit() throws SQLException {
+<span class="nc" id="L850">            throw new UnsupportedOperationException(&quot;supportsOpenCursorsAcrossCommit&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsOpenCursorsAcrossRollback() throws SQLException {
+<span class="nc" id="L856">            throw new UnsupportedOperationException(&quot;supportsOpenCursorsAcrossRollback&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsOpenStatementsAcrossCommit() throws SQLException {
+<span class="nc" id="L862">            throw new UnsupportedOperationException(&quot;supportsOpenStatementsAcrossCommit&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsOpenStatementsAcrossRollback() throws SQLException {
+<span class="nc" id="L868">            throw new UnsupportedOperationException(&quot;supportsOpenStatementsAcrossRollback&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxBinaryLiteralLength() throws SQLException {
+<span class="nc" id="L874">            throw new UnsupportedOperationException(&quot;getMaxBinaryLiteralLength&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxCharLiteralLength() throws SQLException {
+<span class="nc" id="L880">            throw new UnsupportedOperationException(&quot;getMaxCharLiteralLength&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxColumnNameLength() throws SQLException {
+<span class="nc" id="L886">            throw new UnsupportedOperationException(&quot;getMaxColumnNameLength&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxColumnsInGroupBy() throws SQLException {
+<span class="nc" id="L892">            throw new UnsupportedOperationException(&quot;getMaxColumnsInGroupBy&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxColumnsInIndex() throws SQLException {
+<span class="nc" id="L898">            throw new UnsupportedOperationException(&quot;getMaxColumnsInIndex&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxColumnsInOrderBy() throws SQLException {
+<span class="nc" id="L904">            throw new UnsupportedOperationException(&quot;getMaxColumnsInOrderBy&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxColumnsInSelect() throws SQLException {
+<span class="nc" id="L910">            throw new UnsupportedOperationException(&quot;getMaxColumnsInSelect&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxColumnsInTable() throws SQLException {
+<span class="nc" id="L916">            throw new UnsupportedOperationException(&quot;getMaxColumnsInTable&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxConnections() throws SQLException {
+<span class="nc" id="L922">            throw new UnsupportedOperationException(&quot;getMaxConnections&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxCursorNameLength() throws SQLException {
+<span class="nc" id="L928">            throw new UnsupportedOperationException(&quot;getMaxCursorNameLength&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxIndexLength() throws SQLException {
+<span class="nc" id="L934">            throw new UnsupportedOperationException(&quot;getMaxIndexLength&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxSchemaNameLength() throws SQLException {
+<span class="nc" id="L940">            throw new UnsupportedOperationException(&quot;getMaxSchemaNameLength&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxProcedureNameLength() throws SQLException {
+<span class="nc" id="L946">            throw new UnsupportedOperationException(&quot;getMaxProcedureNameLength&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxCatalogNameLength() throws SQLException {
+<span class="nc" id="L952">            throw new UnsupportedOperationException(&quot;getMaxCatalogNameLength&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxRowSize() throws SQLException {
+<span class="nc" id="L958">            throw new UnsupportedOperationException(&quot;getMaxRowSize&quot;);</span>
+
+        }
+
+        @Override
+        public boolean doesMaxRowSizeIncludeBlobs() throws SQLException {
+<span class="nc" id="L964">            throw new UnsupportedOperationException(&quot;doesMaxRowSizeIncludeBlobs&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxStatementLength() throws SQLException {
+<span class="nc" id="L970">            throw new UnsupportedOperationException(&quot;getMaxStatementLength&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxStatements() throws SQLException {
+<span class="nc" id="L976">            throw new UnsupportedOperationException(&quot;getMaxStatements&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxTableNameLength() throws SQLException {
+<span class="nc" id="L982">            throw new UnsupportedOperationException(&quot;getMaxTableNameLength&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxTablesInSelect() throws SQLException {
+<span class="nc" id="L988">            throw new UnsupportedOperationException(&quot;getMaxTablesInSelect&quot;);</span>
+
+        }
+
+        @Override
+        public int getMaxUserNameLength() throws SQLException {
+<span class="nc" id="L994">            throw new UnsupportedOperationException(&quot;getMaxUserNameLength&quot;);</span>
+
+        }
+
+        @Override
+        public int getDefaultTransactionIsolation() throws SQLException {
+<span class="nc" id="L1000">            throw new UnsupportedOperationException(&quot;getDefaultTransactionIsolation&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsTransactions() throws SQLException {
+<span class="nc" id="L1006">            throw new UnsupportedOperationException(&quot;supportsTransactions&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsTransactionIsolationLevel(int level) throws SQLException {
+<span class="nc" id="L1012">            throw new UnsupportedOperationException(&quot;supportsTransactionIsolationLevel&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsDataDefinitionAndDataManipulationTransactions() throws SQLException {
+<span class="nc" id="L1018">            throw new UnsupportedOperationException(&quot;supportsDataDefinitionAndDataManipulationTransactions&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsDataManipulationTransactionsOnly() throws SQLException {
+<span class="nc" id="L1024">            throw new UnsupportedOperationException(&quot;supportsDataManipulationTransactionsOnly&quot;);</span>
+
+        }
+
+        @Override
+        public boolean dataDefinitionCausesTransactionCommit() throws SQLException {
+<span class="nc" id="L1030">            throw new UnsupportedOperationException(&quot;dataDefinitionCausesTransactionCommit&quot;);</span>
+
+        }
+
+        @Override
+        public boolean dataDefinitionIgnoredInTransactions() throws SQLException {
+<span class="nc" id="L1036">            throw new UnsupportedOperationException(&quot;dataDefinitionIgnoredInTransactions&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getProcedures(String catalog, String schemaPattern, String procedureNamePattern) throws SQLException {
+<span class="nc" id="L1042">            throw new UnsupportedOperationException(&quot;getProcedures&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getProcedureColumns(String catalog, String schemaPattern, String procedureNamePattern, String columnNamePattern) throws SQLException {
+<span class="nc" id="L1048">            throw new UnsupportedOperationException(&quot;getProcedureColumns&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types) throws SQLException {
+<span class="nc" id="L1054">            throw new UnsupportedOperationException(&quot;getTables&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getSchemas() throws SQLException {
+<span class="nc" id="L1060">            throw new UnsupportedOperationException(&quot;getSchemas&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getCatalogs() throws SQLException {
+<span class="nc" id="L1066">            throw new UnsupportedOperationException(&quot;getCatalogs&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getTableTypes() throws SQLException {
+<span class="nc" id="L1072">            throw new UnsupportedOperationException(&quot;getTableTypes&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
+<span class="nc" id="L1078">            throw new UnsupportedOperationException(&quot;getColumns&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getColumnPrivileges(String catalog, String schema, String table, String columnNamePattern) throws SQLException {
+<span class="nc" id="L1084">            throw new UnsupportedOperationException(&quot;getColumnPrivileges&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getTablePrivileges(String catalog, String schemaPattern, String tableNamePattern) throws SQLException {
+<span class="nc" id="L1090">            throw new UnsupportedOperationException(&quot;getTablePrivileges&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getBestRowIdentifier(String catalog, String schema, String table, int scope, boolean nullable) throws SQLException {
+<span class="nc" id="L1096">            throw new UnsupportedOperationException(&quot;getBestRowIdentifier&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getVersionColumns(String catalog, String schema, String table) throws SQLException {
+<span class="nc" id="L1102">            throw new UnsupportedOperationException(&quot;getVersionColumns&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getPrimaryKeys(String catalog, String schema, String table) throws SQLException {
+<span class="nc" id="L1108">            throw new UnsupportedOperationException(&quot;getPrimaryKeys&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getImportedKeys(String catalog, String schema, String table) throws SQLException {
+<span class="nc" id="L1114">            throw new UnsupportedOperationException(&quot;getImportedKeys&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getExportedKeys(String catalog, String schema, String table) throws SQLException {
+<span class="nc" id="L1120">            throw new UnsupportedOperationException(&quot;getExportedKeys&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getCrossReference(String parentCatalog, String parentSchema, String parentTable, String foreignCatalog, String foreignSchema, String foreignTable) throws SQLException {
+<span class="nc" id="L1126">            throw new UnsupportedOperationException(&quot;getCrossReference&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getTypeInfo() throws SQLException {
+<span class="nc" id="L1132">            throw new UnsupportedOperationException(&quot;getTypeInfo&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getIndexInfo(String catalog, String schema, String table, boolean unique, boolean approximate) throws SQLException {
+<span class="nc" id="L1138">            throw new UnsupportedOperationException(&quot;getIndexInfo&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsResultSetType(int type) throws SQLException {
+<span class="nc" id="L1144">            throw new UnsupportedOperationException(&quot;supportsResultSetType&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsResultSetConcurrency(int type, int concurrency) throws SQLException {
+<span class="nc" id="L1150">            throw new UnsupportedOperationException(&quot;supportsResultSetConcurrency&quot;);</span>
+
+        }
+
+        @Override
+        public boolean ownUpdatesAreVisible(int type) throws SQLException {
+<span class="nc" id="L1156">            throw new UnsupportedOperationException(&quot;ownUpdatesAreVisible&quot;);</span>
+
+        }
+
+        @Override
+        public boolean ownDeletesAreVisible(int type) throws SQLException {
+<span class="nc" id="L1162">            throw new UnsupportedOperationException(&quot;ownDeletesAreVisible&quot;);</span>
+
+        }
+
+        @Override
+        public boolean ownInsertsAreVisible(int type) throws SQLException {
+<span class="nc" id="L1168">            throw new UnsupportedOperationException(&quot;ownInsertsAreVisible&quot;);</span>
+
+        }
+
+        @Override
+        public boolean othersUpdatesAreVisible(int type) throws SQLException {
+<span class="nc" id="L1174">            throw new UnsupportedOperationException(&quot;othersUpdatesAreVisible&quot;);</span>
+
+        }
+
+        @Override
+        public boolean othersDeletesAreVisible(int type) throws SQLException {
+<span class="nc" id="L1180">            throw new UnsupportedOperationException(&quot;othersDeletesAreVisible&quot;);</span>
+
+        }
+
+        @Override
+        public boolean othersInsertsAreVisible(int type) throws SQLException {
+<span class="nc" id="L1186">            throw new UnsupportedOperationException(&quot;othersInsertsAreVisible&quot;);</span>
+
+        }
+
+        @Override
+        public boolean updatesAreDetected(int type) throws SQLException {
+<span class="nc" id="L1192">            throw new UnsupportedOperationException(&quot;updatesAreDetected&quot;);</span>
+
+        }
+
+        @Override
+        public boolean deletesAreDetected(int type) throws SQLException {
+<span class="nc" id="L1198">            throw new UnsupportedOperationException(&quot;deletesAreDetected&quot;);</span>
+
+        }
+
+        @Override
+        public boolean insertsAreDetected(int type) throws SQLException {
+<span class="nc" id="L1204">            throw new UnsupportedOperationException(&quot;insertsAreDetected&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsBatchUpdates() throws SQLException {
+<span class="nc" id="L1210">            throw new UnsupportedOperationException(&quot;supportsBatchUpdates&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types) throws SQLException {
+<span class="nc" id="L1216">            throw new UnsupportedOperationException(&quot;getUDTs&quot;);</span>
+
+        }
+
+        @Override
+        public Connection getConnection() throws SQLException {
+<span class="nc" id="L1222">            throw new UnsupportedOperationException(&quot;getConnection&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsSavepoints() throws SQLException {
+<span class="nc" id="L1228">            throw new UnsupportedOperationException(&quot;supportsSavepoints&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsNamedParameters() throws SQLException {
+<span class="nc" id="L1234">            throw new UnsupportedOperationException(&quot;supportsNamedParameters&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsMultipleOpenResults() throws SQLException {
+<span class="nc" id="L1240">            throw new UnsupportedOperationException(&quot;supportsMultipleOpenResults&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsGetGeneratedKeys() throws SQLException {
+<span class="nc" id="L1246">            throw new UnsupportedOperationException(&quot;supportsGetGeneratedKeys&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getSuperTypes(String catalog, String schemaPattern, String typeNamePattern) throws SQLException {
+<span class="nc" id="L1252">            throw new UnsupportedOperationException(&quot;getSuperTypes&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getSuperTables(String catalog, String schemaPattern, String tableNamePattern) throws SQLException {
+<span class="nc" id="L1258">            throw new UnsupportedOperationException(&quot;getSuperTables&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getAttributes(String catalog, String schemaPattern, String typeNamePattern, String attributeNamePattern) throws SQLException {
+<span class="nc" id="L1264">            throw new UnsupportedOperationException(&quot;getAttributes&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsResultSetHoldability(int holdability) throws SQLException {
+<span class="nc" id="L1270">            throw new UnsupportedOperationException(&quot;supportsResultSetHoldability&quot;);</span>
+
+        }
+
+        @Override
+        public int getResultSetHoldability() throws SQLException {
+<span class="nc" id="L1276">            throw new UnsupportedOperationException(&quot;getResultSetHoldability&quot;);</span>
+
+        }
+
+        @Override
+        public int getDatabaseMajorVersion() throws SQLException {
+<span class="nc" id="L1282">            throw new UnsupportedOperationException(&quot;getDatabaseMajorVersion&quot;);</span>
+
+        }
+
+        @Override
+        public int getDatabaseMinorVersion() throws SQLException {
+<span class="nc" id="L1288">            throw new UnsupportedOperationException(&quot;getDatabaseMinorVersion&quot;);</span>
+
+        }
+
+        @Override
+        public int getJDBCMajorVersion() throws SQLException {
+<span class="nc" id="L1294">            throw new UnsupportedOperationException(&quot;getJDBCMajorVersion&quot;);</span>
+
+        }
+
+        @Override
+        public int getJDBCMinorVersion() throws SQLException {
+<span class="nc" id="L1300">            throw new UnsupportedOperationException(&quot;getJDBCMinorVersion&quot;);</span>
+
+        }
+
+        @Override
+        public int getSQLStateType() throws SQLException {
+<span class="nc" id="L1306">            throw new UnsupportedOperationException(&quot;getSQLStateType&quot;);</span>
+
+        }
+
+        @Override
+        public boolean locatorsUpdateCopy() throws SQLException {
+<span class="nc" id="L1312">            throw new UnsupportedOperationException(&quot;locatorsUpdateCopy&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsStatementPooling() throws SQLException {
+<span class="nc" id="L1318">            throw new UnsupportedOperationException(&quot;supportsStatementPooling&quot;);</span>
+
+        }
+
+        @Override
+        public RowIdLifetime getRowIdLifetime() throws SQLException {
+<span class="nc" id="L1324">            throw new UnsupportedOperationException(&quot;getRowIdLifetime&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException {
+<span class="nc" id="L1330">            throw new UnsupportedOperationException(&quot;getSchemas&quot;);</span>
+
+        }
+
+        @Override
+        public boolean supportsStoredFunctionsUsingCallSyntax() throws SQLException {
+<span class="nc" id="L1336">            throw new UnsupportedOperationException(&quot;supportsStoredFunctionsUsingCallSyntax&quot;);</span>
+
+        }
+
+        @Override
+        public boolean autoCommitFailureClosesAllResultSets() throws SQLException {
+<span class="nc" id="L1342">            throw new UnsupportedOperationException(&quot;autoCommitFailureClosesAllResultSets&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getClientInfoProperties() throws SQLException {
+<span class="nc" id="L1348">            throw new UnsupportedOperationException(&quot;getClientInfoProperties&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern) throws SQLException {
+<span class="nc" id="L1354">            throw new UnsupportedOperationException(&quot;getFunctions&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getFunctionColumns(String catalog, String schemaPattern, String functionNamePattern, String columnNamePattern) throws SQLException {
+<span class="nc" id="L1360">            throw new UnsupportedOperationException(&quot;getFunctionColumns&quot;);</span>
+
+        }
+
+        @Override
+        public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
+<span class="nc" id="L1366">            throw new UnsupportedOperationException(&quot;getPseudoColumns&quot;);</span>
+
+        }
+
+        @Override
+        public boolean generatedKeyAlwaysReturned() throws SQLException {
+<span class="nc" id="L1372">            throw new UnsupportedOperationException(&quot;generatedKeyAlwaysReturned&quot;);</span>
+
+        }
+
+        @Override
+        public &lt;T&gt; T unwrap(Class&lt;T&gt; iface) throws SQLException {
+<span class="nc" id="L1378">            throw new UnsupportedOperationException(&quot;unwrap&quot;);</span>
+
+        }
+
+        @Override
+        public boolean isWrapperFor(Class&lt;?&gt; iface) throws SQLException {
+<span class="nc" id="L1384">            throw new UnsupportedOperationException(&quot;isWrapperFor&quot;);</span>
+
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
