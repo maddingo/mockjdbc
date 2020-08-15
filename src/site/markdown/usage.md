@@ -14,8 +14,9 @@ val21, val22,...
 ```
 
 ## Determine the file name 
-`java -jar mock-jdbc.jar no.maddin.mockjdbc.DriverTool "select 1 from dual` would generate 2a44ecfe. 
+`java -jar mock-jdbc.jar no.maddin.mockjdbc.DriverTool "select 1 from dual"` would generate 2a44ecfe. 
 I.e. the data for the query has to be in `<path to data file>/2a44ecfe.csv`.
+
 ## Example
 
 ```java
@@ -35,7 +36,7 @@ class MockJdbcTest {
             while(rs.next()) {
                 assertThat(rs.getMetaData().getColumnLabel(2), is(equalTo("val")));
                 assertThat(rs.getMetaData().getColumnType(2), is(equalTo(columnType)));
-                T val = getValue.getValue(rs);
+                Object val = getValue.getValue(rs);
                 assertThat(val, is(instanceOf(targetClass)));
             }
         }
