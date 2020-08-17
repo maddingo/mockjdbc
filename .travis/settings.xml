@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <pluginGroups>
+    <pluginGroup>org.springframework.boot</pluginGroup>
+    <pluginGroup>org.sonarsource.scanner.maven</pluginGroup>
+    <pluginGroup>org.jenkins-ci.tools</pluginGroup>
+  </pluginGroups>
+
+  <proxies>
+  </proxies>
+
+  <servers>
+    <server>
+      <id>sonatype-nexus-staging</id>
+      <username>${env.SONATYPE_NEXUS_USER}</username>
+      <password>${env.SONATYPE_NEXUS_PASSWORD}</password>
+    </server>
+
+    <server>
+      <id>sonatype-nexus-snapshots</id>
+      <username>${env.SONATYPE_NEXUS_USER}</username>
+      <password>${env.SONATYPE_NEXUS_PASSWORD}</password>
+    </server>
+
+    <server>
+      <id>github</id>
+      <username></username>
+      <password>${env.GITHUB_TOKEN}</password>
+    </server>
+
+  </servers>
+
+  <profiles>
+    <profile>
+      <id>default-settings</id>
+
+      <repositories>
+        <repository>
+          <id>repo.jenkins-ci.org</id>
+          <url>https://repo.jenkins-ci.org/public/</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>repo.jenkins-ci.org</id>
+          <url>https://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>default-settings</activeProfile>
+  </activeProfiles>
+
+</settings>

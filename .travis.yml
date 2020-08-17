@@ -8,6 +8,7 @@ addons:
 matrix:
   include:
     - jdk: openjdk11
-      script: scripts/build-jdk11.sh
+      script: .travis/build-jdk11.sh
     - jdk: openjdk8
       script: mvn clean test
+
