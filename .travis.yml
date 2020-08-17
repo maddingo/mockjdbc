@@ -1,6 +1,13 @@
 dist: xenial
 language: java
 
+cache:
+  directories:
+    - $HOME/.m2/repository
+
+before_cache:
+  - rm -rf $HOME/.m2/no/maddin
+
 addons:
   sonarcloud:
     organization: "maddingo-github"
