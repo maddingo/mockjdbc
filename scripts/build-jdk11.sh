@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -ev
+export MAVEN_OPTS="--add-modules ALL-SYSTEM"
 if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
-  MAVEN_OPTS="--add-modules ALL-SYSTEM" mvn clean install sonar:sonar
+   mvn -B clean install sonar:sonar
 else
-  MAVEN_OPTS="--add-modules ALL-SYSTEM" mvn clean verify
+  mvn -B clean verify
 fi
