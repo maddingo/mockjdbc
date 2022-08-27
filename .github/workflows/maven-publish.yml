@@ -34,10 +34,10 @@ jobs:
 #        settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
-      run: mvn -B verify -P github
+      run: mvn -B verify
 
     - name: Publish to GitHub Packages
-      run: mvn deploy
+      run: mvn deploy -DskipTests -P github
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
