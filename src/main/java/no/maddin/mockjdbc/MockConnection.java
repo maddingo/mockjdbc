@@ -1278,15 +1278,14 @@ public class MockConnection implements Connection {
         }
 
         @Override
-        public int getDatabaseMajorVersion() throws SQLException {
-            throw new UnsupportedOperationException("getDatabaseMajorVersion");
+        public int getDatabaseMajorVersion() {
+            return -1;
 
         }
 
         @Override
-        public int getDatabaseMinorVersion() throws SQLException {
-            throw new UnsupportedOperationException("getDatabaseMinorVersion");
-
+        public int getDatabaseMinorVersion() {
+            return -1;
         }
 
         @Override
