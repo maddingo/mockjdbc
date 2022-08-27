@@ -34,7 +34,7 @@ public class JooqTest {
             Connection con = DriverManager.getConnection("jdbc:mock:csv;path=" + outputDir.toString());
             DSLContext context = DSL.using(con)
         ) {
-            Result<Record> records = context.select().from("mytable").fetch();
+            Result<org.jooq.Record> records = context.select().from("mytable").fetch();
             assertThat(records.size(), is(equalTo(2)));
             assertThat(records.fields(),
                 is(
