@@ -31,14 +31,13 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: 'maven'
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
-
+#        settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
-      run: mvn -B verify
+      run: mvn -B verify -P github
 
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+    - name: Publish to GitHub Packages
+      run: mvn deploy
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
@@ -53,7 +52,7 @@ jobs:
         server-password: SONATYPE_PASSWORD
         gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
         gpg-passphrase: SONATYPE_GPG_PASSPHRASE
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
+#        settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Publish to Sonatype OSS
       run: mvn deploy
