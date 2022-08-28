@@ -5,7 +5,7 @@ Available on Maven Central: [![Maven Central](https://img.shields.io/maven-centr
 
 Sonatype Snapshots: [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/oss.sonatype.org/no.maddin.mockjdbc/mock-jdbc.svg?style=plastic)](https://oss.sonatype.org/#nexus-search;gav~no.maddin.mockjdbc~mock-jdbc~~~)
 
-Build status: ![Github](https://github.com/github/docs/actions/workflows/maven-publish.yml/badge.svg)
+Build status: ![Github](https://github.com/maddingo/mockjdbc/actions/workflows/maven-publish.yml/badge.svg)
 
 Documentation: https://maddingo.github.io/mockjdbc/
 
