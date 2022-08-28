@@ -1,0 +1,1220 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MockResultSet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mock-jdbc</a> &gt; <a href="index.source.html" class="el_package">no.maddin.mockjdbc</a> &gt; <span class="el_source">MockResultSet.java</span></div><h1>MockResultSet.java</h1><pre class="source lang-java linenums">package no.maddin.mockjdbc;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.nio.file.Files;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class MockResultSet implements ResultSet {
+    private final File csvFile;
+    private final Iterator&lt;String&gt; lines;
+    private Record currentRecord;
+    private MockResultSetMetaData metaData;
+
+<span class="fc" id="L27">    MockResultSet(File csvFile) throws SQLException {</span>
+<span class="fc" id="L28">        this.csvFile = csvFile;</span>
+<span class="fc" id="L29">        try (Stream&lt;String&gt; stringStream = Files.lines(csvFile.toPath())) {</span>
+<span class="fc" id="L30">            this.lines = stringStream.collect(Collectors.toList()).iterator();</span>
+<span class="nc" id="L31">        } catch (IOException ex) {</span>
+<span class="nc" id="L32">            throw new SQLException(ex);</span>
+<span class="fc" id="L33">        }</span>
+<span class="fc" id="L34">        metaData = createMetaData();</span>
+<span class="fc" id="L35">    }</span>
+
+    private MockResultSetMetaData createMetaData() throws SQLException {
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if (!lines.hasNext()) {</span>
+<span class="nc" id="L39">            throw new SQLException(&quot;Missing header line, cannot create metadata&quot;);</span>
+        }
+<span class="fc" id="L41">        return new MockResultSetMetaData(&quot;mytable&quot;, lines.next());</span>
+    }
+
+    private String[] splitLine(String s) {
+<span class="fc" id="L45">        return s.split(&quot;\\s*,\\s*&quot;);</span>
+    }
+
+    @Override
+    public boolean next() throws SQLException {
+<span class="fc" id="L50">        boolean hasNext = lines.hasNext();</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (hasNext) {</span>
+<span class="fc" id="L52">            currentRecord = readRecord(lines.next());</span>
+        }
+<span class="fc" id="L54">        return hasNext;</span>
+    }
+
+    private Record readRecord(String line) {
+<span class="fc" id="L58">        String[] stringRecord = splitLine(line);</span>
+<span class="fc" id="L59">        return Record.create(stringRecord, metaData.getColumnNames());</span>
+    }
+
+    @Override
+    public void close() throws SQLException {
+<span class="fc" id="L64">        this.currentRecord = null;</span>
+<span class="fc" id="L65">        this.metaData = null;</span>
+<span class="fc" id="L66">    }</span>
+
+    @Override
+    public boolean wasNull() throws SQLException {
+<span class="nc" id="L70">        throw new UnsupportedOperationException(&quot;wasNull&quot;);</span>
+
+    }
+
+    @Override
+    public String getString(int columnIndex) throws SQLException {
+<span class="fc" id="L76">        return check(currentRecord).get(metaData.getColumnName(columnIndex));</span>
+    }
+
+    @Override
+    public boolean getBoolean(int columnIndex) throws SQLException {
+<span class="nc" id="L81">        throw new UnsupportedOperationException(&quot;getBoolean&quot;);</span>
+    }
+
+    @Override
+    public byte getByte(int columnIndex) throws SQLException {
+<span class="fc" id="L86">        return getByte(metaData.getColumnLabel(columnIndex));</span>
+    }
+
+    @Override
+    public short getShort(int columnIndex) throws SQLException {
+<span class="fc" id="L91">        return getShort(metaData.getColumnLabel(columnIndex));</span>
+    }
+
+    @Override
+    public int getInt(int columnIndex) throws SQLException {
+<span class="fc" id="L96">        return getInt(metaData.getColumnLabel(columnIndex));</span>
+    }
+
+    @Override
+    public long getLong(int columnIndex) throws SQLException {
+<span class="fc" id="L101">        return getLong(metaData.getColumnLabel(columnIndex));</span>
+    }
+
+    @Override
+    public float getFloat(int columnIndex) throws SQLException {
+<span class="fc" id="L106">        return getFloat(metaData.getColumnLabel(columnIndex));</span>
+    }
+
+    @Override
+    public double getDouble(int columnIndex) throws SQLException {
+<span class="fc" id="L111">        return getDouble(metaData.getColumnLabel(columnIndex));</span>
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException {
+<span class="nc" id="L116">        throw new UnsupportedOperationException(&quot;getBigDecimal&quot;);</span>
+    }
+
+    @Override
+    public byte[] getBytes(int columnIndex) throws SQLException {
+<span class="nc" id="L121">        throw new UnsupportedOperationException(&quot;getBytes&quot;);</span>
+    }
+
+    @Override
+    public Date getDate(int columnIndex) throws SQLException {
+<span class="fc" id="L126">        return getDate(metaData.getColumnLabel(columnIndex));</span>
+    }
+
+    @Override
+    public Time getTime(int columnIndex) throws SQLException {
+<span class="fc" id="L131">        return getTime(metaData.getColumnLabel(columnIndex));</span>
+    }
+
+    @Override
+    public Timestamp getTimestamp(int columnIndex) throws SQLException {
+<span class="fc" id="L136">        return getTimestamp(metaData.getColumnLabel(columnIndex));</span>
+    }
+
+    @Override
+    public InputStream getAsciiStream(int columnIndex) throws SQLException {
+<span class="nc" id="L141">        throw new UnsupportedOperationException(&quot;getAsciiStream&quot;);</span>
+
+    }
+
+    @Override
+    public InputStream getUnicodeStream(int columnIndex) throws SQLException {
+<span class="nc" id="L147">        throw new UnsupportedOperationException(&quot;getUnicodeStream&quot;);</span>
+
+    }
+
+    @Override
+    public InputStream getBinaryStream(int columnIndex) throws SQLException {
+<span class="nc" id="L153">        throw new UnsupportedOperationException(&quot;getBinaryStream&quot;);</span>
+
+    }
+
+    @Override
+    public String getString(String columnLabel) throws SQLException {
+<span class="fc" id="L159">        String result = check(currentRecord).get(columnLabel);</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        if (result == null) {</span>
+<span class="nc" id="L161">            throw new SQLException(&quot;No Result for column: &quot; + columnLabel);</span>
+        }
+<span class="fc" id="L163">        return result;</span>
+    }
+
+    @Override
+    public boolean getBoolean(String columnLabel) throws SQLException {
+<span class="nc" id="L168">        throw new UnsupportedOperationException(&quot;getBoolean&quot;);</span>
+
+    }
+
+    @Override
+    public byte getByte(String columnLabel) throws SQLException {
+<span class="fc" id="L174">        String val = check(currentRecord).get(columnLabel);</span>
+<span class="fc" id="L175">        return Byte.parseByte(val);</span>
+    }
+
+    @Override
+    public short getShort(String columnLabel) throws SQLException {
+<span class="fc" id="L180">        String val = check(currentRecord).get(columnLabel);</span>
+<span class="fc" id="L181">        return Short.parseShort(val);</span>
+    }
+
+    @Override
+    public int getInt(String columnLabel) throws SQLException {
+<span class="fc" id="L186">        String val = check(currentRecord).get(columnLabel);</span>
+<span class="fc" id="L187">        return Integer.parseInt(val);</span>
+    }
+
+    @Override
+    public long getLong(String columnLabel) throws SQLException {
+<span class="fc" id="L192">        String val = check(currentRecord).get(columnLabel);</span>
+<span class="fc" id="L193">        return Long.parseLong(val);</span>
+    }
+
+    private Record check(Record record) throws SQLException {
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">        if (record == null) {</span>
+<span class="nc" id="L198">            throw new SQLException(&quot;No current record&quot;);</span>
+        }
+<span class="fc" id="L200">        return record;</span>
+    }
+
+    @Override
+    public float getFloat(String columnLabel) throws SQLException {
+<span class="fc" id="L205">        String val = check(currentRecord).get(columnLabel);</span>
+<span class="fc" id="L206">        return Float.parseFloat(val);</span>
+    }
+
+    @Override
+    public double getDouble(String columnLabel) throws SQLException {
+<span class="fc" id="L211">        String val = check(currentRecord).get(columnLabel);</span>
+<span class="fc" id="L212">        return Double.parseDouble(val);</span>
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(String columnLabel, int scale) throws SQLException {
+<span class="nc" id="L217">        throw new UnsupportedOperationException(&quot;getBigDecimal&quot;);</span>
+
+    }
+
+    @Override
+    public byte[] getBytes(String columnLabel) throws SQLException {
+<span class="nc" id="L223">        throw new UnsupportedOperationException(&quot;getBytes&quot;);</span>
+
+    }
+
+    @Override
+    public Date getDate(String columnLabel) throws SQLException {
+<span class="fc" id="L229">        String val = check(currentRecord).get(columnLabel);</span>
+<span class="fc" id="L230">        LocalDate ld = LocalDate.parse(val, DateTimeFormatter.ISO_DATE);</span>
+<span class="fc" id="L231">        return Date.valueOf(ld);</span>
+    }
+
+    @Override
+    public Time getTime(String columnLabel) throws SQLException {
+<span class="fc" id="L236">        String val = check(currentRecord).get(columnLabel);</span>
+<span class="fc" id="L237">        LocalTime lt = LocalTime.parse(val, DateTimeFormatter.ISO_TIME);</span>
+<span class="fc" id="L238">        return Time.valueOf(lt);</span>
+    }
+
+    @Override
+    public Timestamp getTimestamp(String columnLabel) throws SQLException {
+<span class="fc" id="L243">        String val = check(currentRecord).get(columnLabel);</span>
+<span class="fc" id="L244">        LocalDateTime ldt = LocalDateTime.parse(val, DateTimeFormatter.ISO_DATE_TIME);</span>
+<span class="fc" id="L245">        return Timestamp.valueOf(ldt);</span>
+    }
+
+    @Override
+    public InputStream getAsciiStream(String columnLabel) throws SQLException {
+<span class="nc" id="L250">        throw new UnsupportedOperationException(&quot;getAsciiStream&quot;);</span>
+
+    }
+
+    @Override
+    public InputStream getUnicodeStream(String columnLabel) throws SQLException {
+<span class="nc" id="L256">        throw new UnsupportedOperationException(&quot;getUnicodeStream&quot;);</span>
+
+    }
+
+    @Override
+    public InputStream getBinaryStream(String columnLabel) throws SQLException {
+<span class="nc" id="L262">        throw new UnsupportedOperationException(&quot;getBinaryStream&quot;);</span>
+
+    }
+
+    @Override
+    public SQLWarning getWarnings() throws SQLException {
+<span class="nc" id="L268">        throw new UnsupportedOperationException(&quot;getWarnings&quot;);</span>
+
+    }
+
+    @Override
+    public void clearWarnings() throws SQLException {
+<span class="nc" id="L274">        throw new UnsupportedOperationException(&quot;clearWarnings&quot;);</span>
+
+    }
+
+    @Override
+    public String getCursorName() throws SQLException {
+<span class="nc" id="L280">        throw new UnsupportedOperationException(&quot;getCursorName&quot;);</span>
+
+    }
+
+    @Override
+    public ResultSetMetaData getMetaData() throws SQLException {
+<span class="pc bpc" id="L286" title="1 of 2 branches missed.">        if (metaData == null) {</span>
+<span class="nc" id="L287">            throw new SQLException(&quot;ResultSet closed&quot;);</span>
+        }
+<span class="fc" id="L289">        return metaData;</span>
+    }
+
+    @Override
+    public Object getObject(int columnIndex) throws SQLException {
+<span class="nc" id="L294">        throw new UnsupportedOperationException(&quot;getObject&quot;);</span>
+
+    }
+
+    @Override
+    public Object getObject(String columnLabel) throws SQLException {
+<span class="nc" id="L300">        throw new UnsupportedOperationException(&quot;getObject&quot;);</span>
+
+    }
+
+    @Override
+    public int findColumn(String columnLabel) throws SQLException {
+<span class="nc" id="L306">        throw new UnsupportedOperationException(&quot;findColumn&quot;);</span>
+
+    }
+
+    @Override
+    public Reader getCharacterStream(int columnIndex) throws SQLException {
+<span class="nc" id="L312">        throw new UnsupportedOperationException(&quot;getCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public Reader getCharacterStream(String columnLabel) throws SQLException {
+<span class="nc" id="L318">        throw new UnsupportedOperationException(&quot;getCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
+<span class="fc" id="L324">        return getBigDecimal(metaData.getColumnLabel(columnIndex));</span>
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
+<span class="fc" id="L329">        String val = check(currentRecord).get(columnLabel);</span>
+<span class="fc" id="L330">        return BigDecimal.valueOf(Double.parseDouble(val));</span>
+    }
+
+    @Override
+    public boolean isBeforeFirst() throws SQLException {
+<span class="nc" id="L335">        throw new UnsupportedOperationException(&quot;isBeforeFirst&quot;);</span>
+
+    }
+
+    @Override
+    public boolean isAfterLast() throws SQLException {
+<span class="nc" id="L341">        throw new UnsupportedOperationException(&quot;isAfterLast&quot;);</span>
+
+    }
+
+    @Override
+    public boolean isFirst() throws SQLException {
+<span class="nc" id="L347">        throw new UnsupportedOperationException(&quot;isFirst&quot;);</span>
+
+    }
+
+    @Override
+    public boolean isLast() throws SQLException {
+<span class="nc" id="L353">        throw new UnsupportedOperationException(&quot;isLast&quot;);</span>
+
+    }
+
+    @Override
+    public void beforeFirst() throws SQLException {
+<span class="nc" id="L359">        throw new UnsupportedOperationException(&quot;beforeFirst&quot;);</span>
+
+    }
+
+    @Override
+    public void afterLast() throws SQLException {
+<span class="nc" id="L365">        throw new UnsupportedOperationException(&quot;afterLast&quot;);</span>
+
+    }
+
+    @Override
+    public boolean first() throws SQLException {
+<span class="nc" id="L371">        throw new UnsupportedOperationException(&quot;first&quot;);</span>
+
+    }
+
+    @Override
+    public boolean last() throws SQLException {
+<span class="nc" id="L377">        throw new UnsupportedOperationException(&quot;last&quot;);</span>
+
+    }
+
+    @Override
+    public int getRow() throws SQLException {
+<span class="nc" id="L383">        throw new UnsupportedOperationException(&quot;getRow&quot;);</span>
+
+    }
+
+    @Override
+    public boolean absolute(int row) throws SQLException {
+<span class="nc" id="L389">        throw new UnsupportedOperationException(&quot;absolute&quot;);</span>
+
+    }
+
+    @Override
+    public boolean relative(int rows) throws SQLException {
+<span class="nc" id="L395">        throw new UnsupportedOperationException(&quot;relative&quot;);</span>
+
+    }
+
+    @Override
+    public boolean previous() throws SQLException {
+<span class="nc" id="L401">        throw new UnsupportedOperationException(&quot;previous&quot;);</span>
+
+    }
+
+    @Override
+    public void setFetchDirection(int direction) throws SQLException {
+<span class="nc" id="L407">        throw new UnsupportedOperationException(&quot;setFetchDirection&quot;);</span>
+
+    }
+
+    @Override
+    public int getFetchDirection() throws SQLException {
+<span class="nc" id="L413">        throw new UnsupportedOperationException(&quot;getFetchDirection&quot;);</span>
+
+    }
+
+    @Override
+    public void setFetchSize(int rows) throws SQLException {
+<span class="nc" id="L419">        throw new UnsupportedOperationException(&quot;setFetchSize&quot;);</span>
+
+    }
+
+    @Override
+    public int getFetchSize() throws SQLException {
+<span class="nc" id="L425">        throw new UnsupportedOperationException(&quot;getFetchSize&quot;);</span>
+
+    }
+
+    @Override
+    public int getType() throws SQLException {
+<span class="nc" id="L431">        throw new UnsupportedOperationException(&quot;getType&quot;);</span>
+
+    }
+
+    @Override
+    public int getConcurrency() throws SQLException {
+<span class="nc" id="L437">        throw new UnsupportedOperationException(&quot;getConcurrency&quot;);</span>
+
+    }
+
+    @Override
+    public boolean rowUpdated() throws SQLException {
+<span class="nc" id="L443">        throw new UnsupportedOperationException(&quot;rowUpdated&quot;);</span>
+
+    }
+
+    @Override
+    public boolean rowInserted() throws SQLException {
+<span class="nc" id="L449">        throw new UnsupportedOperationException(&quot;rowInserted&quot;);</span>
+
+    }
+
+    @Override
+    public boolean rowDeleted() throws SQLException {
+<span class="nc" id="L455">        throw new UnsupportedOperationException(&quot;rowDeleted&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNull(int columnIndex) throws SQLException {
+<span class="nc" id="L461">        throw new UnsupportedOperationException(&quot;updateNull&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBoolean(int columnIndex, boolean x) throws SQLException {
+<span class="nc" id="L467">        throw new UnsupportedOperationException(&quot;updateBoolean&quot;);</span>
+
+    }
+
+    @Override
+    public void updateByte(int columnIndex, byte x) throws SQLException {
+<span class="nc" id="L473">        throw new UnsupportedOperationException(&quot;updateByte&quot;);</span>
+
+    }
+
+    @Override
+    public void updateShort(int columnIndex, short x) throws SQLException {
+<span class="nc" id="L479">        throw new UnsupportedOperationException(&quot;updateShort&quot;);</span>
+
+    }
+
+    @Override
+    public void updateInt(int columnIndex, int x) throws SQLException {
+<span class="nc" id="L485">        throw new UnsupportedOperationException(&quot;updateInt&quot;);</span>
+
+    }
+
+    @Override
+    public void updateLong(int columnIndex, long x) throws SQLException {
+<span class="nc" id="L491">        throw new UnsupportedOperationException(&quot;updateLong&quot;);</span>
+
+    }
+
+    @Override
+    public void updateFloat(int columnIndex, float x) throws SQLException {
+<span class="nc" id="L497">        throw new UnsupportedOperationException(&quot;updateFloat&quot;);</span>
+
+    }
+
+    @Override
+    public void updateDouble(int columnIndex, double x) throws SQLException {
+<span class="nc" id="L503">        throw new UnsupportedOperationException(&quot;updateDouble&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBigDecimal(int columnIndex, BigDecimal x) throws SQLException {
+<span class="nc" id="L509">        throw new UnsupportedOperationException(&quot;updateBigDecimal&quot;);</span>
+
+    }
+
+    @Override
+    public void updateString(int columnIndex, String x) throws SQLException {
+<span class="nc" id="L515">        throw new UnsupportedOperationException(&quot;updateString&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBytes(int columnIndex, byte[] x) throws SQLException {
+<span class="nc" id="L521">        throw new UnsupportedOperationException(&quot;updateBytes&quot;);</span>
+
+    }
+
+    @Override
+    public void updateDate(int columnIndex, Date x) throws SQLException {
+<span class="nc" id="L527">        throw new UnsupportedOperationException(&quot;updateDate&quot;);</span>
+
+    }
+
+    @Override
+    public void updateTime(int columnIndex, Time x) throws SQLException {
+<span class="nc" id="L533">        throw new UnsupportedOperationException(&quot;updateTime&quot;);</span>
+
+    }
+
+    @Override
+    public void updateTimestamp(int columnIndex, Timestamp x) throws SQLException {
+<span class="nc" id="L539">        throw new UnsupportedOperationException(&quot;updateTimestamp&quot;);</span>
+
+    }
+
+    @Override
+    public void updateAsciiStream(int columnIndex, InputStream x, int length) throws SQLException {
+<span class="nc" id="L545">        throw new UnsupportedOperationException(&quot;updateAsciiStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBinaryStream(int columnIndex, InputStream x, int length) throws SQLException {
+<span class="nc" id="L551">        throw new UnsupportedOperationException(&quot;updateBinaryStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateCharacterStream(int columnIndex, Reader x, int length) throws SQLException {
+<span class="nc" id="L557">        throw new UnsupportedOperationException(&quot;updateCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateObject(int columnIndex, Object x, int scaleOrLength) throws SQLException {
+<span class="nc" id="L563">        throw new UnsupportedOperationException(&quot;updateObject&quot;);</span>
+
+    }
+
+    @Override
+    public void updateObject(int columnIndex, Object x) throws SQLException {
+<span class="nc" id="L569">        throw new UnsupportedOperationException(&quot;updateObject&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNull(String columnLabel) throws SQLException {
+<span class="nc" id="L575">        throw new UnsupportedOperationException(&quot;updateNull&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBoolean(String columnLabel, boolean x) throws SQLException {
+<span class="nc" id="L581">        throw new UnsupportedOperationException(&quot;updateBoolean&quot;);</span>
+
+    }
+
+    @Override
+    public void updateByte(String columnLabel, byte x) throws SQLException {
+<span class="nc" id="L587">        throw new UnsupportedOperationException(&quot;updateByte&quot;);</span>
+
+    }
+
+    @Override
+    public void updateShort(String columnLabel, short x) throws SQLException {
+<span class="nc" id="L593">        throw new UnsupportedOperationException(&quot;updateShort&quot;);</span>
+
+    }
+
+    @Override
+    public void updateInt(String columnLabel, int x) throws SQLException {
+<span class="nc" id="L599">        throw new UnsupportedOperationException(&quot;updateInt&quot;);</span>
+
+    }
+
+    @Override
+    public void updateLong(String columnLabel, long x) throws SQLException {
+<span class="nc" id="L605">        throw new UnsupportedOperationException(&quot;updateLong&quot;);</span>
+
+    }
+
+    @Override
+    public void updateFloat(String columnLabel, float x) throws SQLException {
+<span class="nc" id="L611">        throw new UnsupportedOperationException(&quot;updateFloat&quot;);</span>
+
+    }
+
+    @Override
+    public void updateDouble(String columnLabel, double x) throws SQLException {
+<span class="nc" id="L617">        throw new UnsupportedOperationException(&quot;updateDouble&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBigDecimal(String columnLabel, BigDecimal x) throws SQLException {
+<span class="nc" id="L623">        throw new UnsupportedOperationException(&quot;updateBigDecimal&quot;);</span>
+
+    }
+
+    @Override
+    public void updateString(String columnLabel, String x) throws SQLException {
+<span class="nc" id="L629">        throw new UnsupportedOperationException(&quot;updateString&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBytes(String columnLabel, byte[] x) throws SQLException {
+<span class="nc" id="L635">        throw new UnsupportedOperationException(&quot;updateBytes&quot;);</span>
+
+    }
+
+    @Override
+    public void updateDate(String columnLabel, Date x) throws SQLException {
+<span class="nc" id="L641">        throw new UnsupportedOperationException(&quot;updateDate&quot;);</span>
+
+    }
+
+    @Override
+    public void updateTime(String columnLabel, Time x) throws SQLException {
+<span class="nc" id="L647">        throw new UnsupportedOperationException(&quot;updateTime&quot;);</span>
+
+    }
+
+    @Override
+    public void updateTimestamp(String columnLabel, Timestamp x) throws SQLException {
+<span class="nc" id="L653">        throw new UnsupportedOperationException(&quot;updateTimestamp&quot;);</span>
+
+    }
+
+    @Override
+    public void updateAsciiStream(String columnLabel, InputStream x, int length) throws SQLException {
+<span class="nc" id="L659">        throw new UnsupportedOperationException(&quot;updateAsciiStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBinaryStream(String columnLabel, InputStream x, int length) throws SQLException {
+<span class="nc" id="L665">        throw new UnsupportedOperationException(&quot;updateBinaryStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateCharacterStream(String columnLabel, Reader reader, int length) throws SQLException {
+<span class="nc" id="L671">        throw new UnsupportedOperationException(&quot;updateCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateObject(String columnLabel, Object x, int scaleOrLength) throws SQLException {
+<span class="nc" id="L677">        throw new UnsupportedOperationException(&quot;updateObject&quot;);</span>
+
+    }
+
+    @Override
+    public void updateObject(String columnLabel, Object x) throws SQLException {
+<span class="nc" id="L683">        throw new UnsupportedOperationException(&quot;updateObject&quot;);</span>
+
+    }
+
+    @Override
+    public void insertRow() throws SQLException {
+<span class="nc" id="L689">        throw new UnsupportedOperationException(&quot;insertRow&quot;);</span>
+
+    }
+
+    @Override
+    public void updateRow() throws SQLException {
+<span class="nc" id="L695">        throw new UnsupportedOperationException(&quot;updateRow&quot;);</span>
+
+    }
+
+    @Override
+    public void deleteRow() throws SQLException {
+<span class="nc" id="L701">        throw new UnsupportedOperationException(&quot;deleteRow&quot;);</span>
+
+    }
+
+    @Override
+    public void refreshRow() throws SQLException {
+<span class="nc" id="L707">        throw new UnsupportedOperationException(&quot;refreshRow&quot;);</span>
+
+    }
+
+    @Override
+    public void cancelRowUpdates() throws SQLException {
+<span class="nc" id="L713">        throw new UnsupportedOperationException(&quot;cancelRowUpdates&quot;);</span>
+
+    }
+
+    @Override
+    public void moveToInsertRow() throws SQLException {
+<span class="nc" id="L719">        throw new UnsupportedOperationException(&quot;moveToInsertRow&quot;);</span>
+
+    }
+
+    @Override
+    public void moveToCurrentRow() throws SQLException {
+<span class="nc" id="L725">        throw new UnsupportedOperationException(&quot;moveToCurrentRow&quot;);</span>
+
+    }
+
+    @Override
+    public Statement getStatement() throws SQLException {
+<span class="nc" id="L731">        throw new UnsupportedOperationException(&quot;getStatement&quot;);</span>
+
+    }
+
+    @Override
+    public Object getObject(int columnIndex, Map&lt;String, Class&lt;?&gt;&gt; map) throws SQLException {
+<span class="nc" id="L737">        throw new UnsupportedOperationException(&quot;getObject&quot;);</span>
+
+    }
+
+    @Override
+    public Ref getRef(int columnIndex) throws SQLException {
+<span class="nc" id="L743">        throw new UnsupportedOperationException(&quot;getRef&quot;);</span>
+
+    }
+
+    @Override
+    public Blob getBlob(int columnIndex) throws SQLException {
+<span class="nc" id="L749">        throw new UnsupportedOperationException(&quot;getBlob&quot;);</span>
+
+    }
+
+    @Override
+    public Clob getClob(int columnIndex) throws SQLException {
+<span class="nc" id="L755">        throw new UnsupportedOperationException(&quot;getClob&quot;);</span>
+
+    }
+
+    @Override
+    public Array getArray(int columnIndex) throws SQLException {
+<span class="nc" id="L761">        throw new UnsupportedOperationException(&quot;getArray&quot;);</span>
+
+    }
+
+    @Override
+    public Object getObject(String columnLabel, Map&lt;String, Class&lt;?&gt;&gt; map) throws SQLException {
+<span class="nc" id="L767">        throw new UnsupportedOperationException(&quot;getObject&quot;);</span>
+
+    }
+
+    @Override
+    public Ref getRef(String columnLabel) throws SQLException {
+<span class="nc" id="L773">        throw new UnsupportedOperationException(&quot;getRef&quot;);</span>
+
+    }
+
+    @Override
+    public Blob getBlob(String columnLabel) throws SQLException {
+<span class="nc" id="L779">        throw new UnsupportedOperationException(&quot;getBlob&quot;);</span>
+
+    }
+
+    @Override
+    public Clob getClob(String columnLabel) throws SQLException {
+<span class="nc" id="L785">        throw new UnsupportedOperationException(&quot;getClob&quot;);</span>
+
+    }
+
+    @Override
+    public Array getArray(String columnLabel) throws SQLException {
+<span class="nc" id="L791">        throw new UnsupportedOperationException(&quot;getArray&quot;);</span>
+
+    }
+
+    @Override
+    public Date getDate(int columnIndex, Calendar cal) throws SQLException {
+<span class="nc" id="L797">        throw new UnsupportedOperationException(&quot;getDate&quot;);</span>
+
+    }
+
+    @Override
+    public Date getDate(String columnLabel, Calendar cal) throws SQLException {
+<span class="nc" id="L803">        throw new UnsupportedOperationException(&quot;getDate&quot;);</span>
+
+    }
+
+    @Override
+    public Time getTime(int columnIndex, Calendar cal) throws SQLException {
+<span class="nc" id="L809">        throw new UnsupportedOperationException(&quot;getTime&quot;);</span>
+
+    }
+
+    @Override
+    public Time getTime(String columnLabel, Calendar cal) throws SQLException {
+<span class="nc" id="L815">        throw new UnsupportedOperationException(&quot;getTime&quot;);</span>
+
+    }
+
+    @Override
+    public Timestamp getTimestamp(int columnIndex, Calendar cal) throws SQLException {
+<span class="nc" id="L821">        throw new UnsupportedOperationException(&quot;getTimestamp&quot;);</span>
+
+    }
+
+    @Override
+    public Timestamp getTimestamp(String columnLabel, Calendar cal) throws SQLException {
+<span class="nc" id="L827">        throw new UnsupportedOperationException(&quot;getTimestamp&quot;);</span>
+
+    }
+
+    @Override
+    public URL getURL(int columnIndex) throws SQLException {
+<span class="nc" id="L833">        throw new UnsupportedOperationException(&quot;getURL&quot;);</span>
+
+    }
+
+    @Override
+    public URL getURL(String columnLabel) throws SQLException {
+<span class="nc" id="L839">        throw new UnsupportedOperationException(&quot;getURL&quot;);</span>
+
+    }
+
+    @Override
+    public void updateRef(int columnIndex, Ref x) throws SQLException {
+<span class="nc" id="L845">        throw new UnsupportedOperationException(&quot;updateRef&quot;);</span>
+
+    }
+
+    @Override
+    public void updateRef(String columnLabel, Ref x) throws SQLException {
+<span class="nc" id="L851">        throw new UnsupportedOperationException(&quot;updateRef&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBlob(int columnIndex, Blob x) throws SQLException {
+<span class="nc" id="L857">        throw new UnsupportedOperationException(&quot;updateBlob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBlob(String columnLabel, Blob x) throws SQLException {
+<span class="nc" id="L863">        throw new UnsupportedOperationException(&quot;updateBlob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateClob(int columnIndex, Clob x) throws SQLException {
+<span class="nc" id="L869">        throw new UnsupportedOperationException(&quot;updateClob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateClob(String columnLabel, Clob x) throws SQLException {
+<span class="nc" id="L875">        throw new UnsupportedOperationException(&quot;updateClob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateArray(int columnIndex, Array x) throws SQLException {
+<span class="nc" id="L881">        throw new UnsupportedOperationException(&quot;updateArray&quot;);</span>
+
+    }
+
+    @Override
+    public void updateArray(String columnLabel, Array x) throws SQLException {
+<span class="nc" id="L887">        throw new UnsupportedOperationException(&quot;updateArray&quot;);</span>
+
+    }
+
+    @Override
+    public RowId getRowId(int columnIndex) throws SQLException {
+<span class="nc" id="L893">        throw new UnsupportedOperationException(&quot;getRowId&quot;);</span>
+
+    }
+
+    @Override
+    public RowId getRowId(String columnLabel) throws SQLException {
+<span class="nc" id="L899">        throw new UnsupportedOperationException(&quot;getRowId&quot;);</span>
+
+    }
+
+    @Override
+    public void updateRowId(int columnIndex, RowId x) throws SQLException {
+<span class="nc" id="L905">        throw new UnsupportedOperationException(&quot;updateRowId&quot;);</span>
+
+    }
+
+    @Override
+    public void updateRowId(String columnLabel, RowId x) throws SQLException {
+<span class="nc" id="L911">        throw new UnsupportedOperationException(&quot;updateRowId&quot;);</span>
+
+    }
+
+    @Override
+    public int getHoldability() throws SQLException {
+<span class="nc" id="L917">        throw new UnsupportedOperationException(&quot;getHoldability&quot;);</span>
+
+    }
+
+    @Override
+    public boolean isClosed() throws SQLException {
+<span class="nc" id="L923">        throw new UnsupportedOperationException(&quot;isClosed&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNString(int columnIndex, String nString) throws SQLException {
+<span class="nc" id="L929">        throw new UnsupportedOperationException(&quot;updateNString&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNString(String columnLabel, String nString) throws SQLException {
+<span class="nc" id="L935">        throw new UnsupportedOperationException(&quot;updateNString&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNClob(int columnIndex, NClob nClob) throws SQLException {
+<span class="nc" id="L941">        throw new UnsupportedOperationException(&quot;updateNClob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNClob(String columnLabel, NClob nClob) throws SQLException {
+<span class="nc" id="L947">        throw new UnsupportedOperationException(&quot;updateNClob&quot;);</span>
+
+    }
+
+    @Override
+    public NClob getNClob(int columnIndex) throws SQLException {
+<span class="nc" id="L953">        throw new UnsupportedOperationException(&quot;getNClob&quot;);</span>
+
+    }
+
+    @Override
+    public NClob getNClob(String columnLabel) throws SQLException {
+<span class="nc" id="L959">        throw new UnsupportedOperationException(&quot;getNClob&quot;);</span>
+
+    }
+
+    @Override
+    public SQLXML getSQLXML(int columnIndex) throws SQLException {
+<span class="nc" id="L965">        throw new UnsupportedOperationException(&quot;getSQLXML&quot;);</span>
+
+    }
+
+    @Override
+    public SQLXML getSQLXML(String columnLabel) throws SQLException {
+<span class="nc" id="L971">        throw new UnsupportedOperationException(&quot;getSQLXML&quot;);</span>
+
+    }
+
+    @Override
+    public void updateSQLXML(int columnIndex, SQLXML xmlObject) throws SQLException {
+<span class="nc" id="L977">        throw new UnsupportedOperationException(&quot;updateSQLXML&quot;);</span>
+
+    }
+
+    @Override
+    public void updateSQLXML(String columnLabel, SQLXML xmlObject) throws SQLException {
+<span class="nc" id="L983">        throw new UnsupportedOperationException(&quot;updateSQLXML&quot;);</span>
+
+    }
+
+    @Override
+    public String getNString(int columnIndex) throws SQLException {
+<span class="nc" id="L989">        throw new UnsupportedOperationException(&quot;getNString&quot;);</span>
+
+    }
+
+    @Override
+    public String getNString(String columnLabel) throws SQLException {
+<span class="nc" id="L995">        throw new UnsupportedOperationException(&quot;getNString&quot;);</span>
+
+    }
+
+    @Override
+    public Reader getNCharacterStream(int columnIndex) throws SQLException {
+<span class="nc" id="L1001">        throw new UnsupportedOperationException(&quot;getNCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public Reader getNCharacterStream(String columnLabel) throws SQLException {
+<span class="nc" id="L1007">        throw new UnsupportedOperationException(&quot;getNCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNCharacterStream(int columnIndex, Reader x, long length) throws SQLException {
+<span class="nc" id="L1013">        throw new UnsupportedOperationException(&quot;updateNCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNCharacterStream(String columnLabel, Reader reader, long length) throws SQLException {
+<span class="nc" id="L1019">        throw new UnsupportedOperationException(&quot;updateNCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateAsciiStream(int columnIndex, InputStream x, long length) throws SQLException {
+<span class="nc" id="L1025">        throw new UnsupportedOperationException(&quot;updateAsciiStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBinaryStream(int columnIndex, InputStream x, long length) throws SQLException {
+<span class="nc" id="L1031">        throw new UnsupportedOperationException(&quot;updateBinaryStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateCharacterStream(int columnIndex, Reader x, long length) throws SQLException {
+<span class="nc" id="L1037">        throw new UnsupportedOperationException(&quot;updateCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateAsciiStream(String columnLabel, InputStream x, long length) throws SQLException {
+<span class="nc" id="L1043">        throw new UnsupportedOperationException(&quot;updateAsciiStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBinaryStream(String columnLabel, InputStream x, long length) throws SQLException {
+<span class="nc" id="L1049">        throw new UnsupportedOperationException(&quot;updateBinaryStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateCharacterStream(String columnLabel, Reader reader, long length) throws SQLException {
+<span class="nc" id="L1055">        throw new UnsupportedOperationException(&quot;updateCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBlob(int columnIndex, InputStream inputStream, long length) throws SQLException {
+<span class="nc" id="L1061">        throw new UnsupportedOperationException(&quot;updateBlob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBlob(String columnLabel, InputStream inputStream, long length) throws SQLException {
+<span class="nc" id="L1067">        throw new UnsupportedOperationException(&quot;updateBlob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateClob(int columnIndex, Reader reader, long length) throws SQLException {
+<span class="nc" id="L1073">        throw new UnsupportedOperationException(&quot;updateClob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateClob(String columnLabel, Reader reader, long length) throws SQLException {
+<span class="nc" id="L1079">        throw new UnsupportedOperationException(&quot;updateClob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNClob(int columnIndex, Reader reader, long length) throws SQLException {
+<span class="nc" id="L1085">        throw new UnsupportedOperationException(&quot;updateNClob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNClob(String columnLabel, Reader reader, long length) throws SQLException {
+<span class="nc" id="L1091">        throw new UnsupportedOperationException(&quot;updateNClob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNCharacterStream(int columnIndex, Reader x) throws SQLException {
+<span class="nc" id="L1097">        throw new UnsupportedOperationException(&quot;updateNCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNCharacterStream(String columnLabel, Reader reader) throws SQLException {
+<span class="nc" id="L1103">        throw new UnsupportedOperationException(&quot;updateNCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateAsciiStream(int columnIndex, InputStream x) throws SQLException {
+<span class="nc" id="L1109">        throw new UnsupportedOperationException(&quot;updateAsciiStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBinaryStream(int columnIndex, InputStream x) throws SQLException {
+<span class="nc" id="L1115">        throw new UnsupportedOperationException(&quot;updateBinaryStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateCharacterStream(int columnIndex, Reader x) throws SQLException {
+<span class="nc" id="L1121">        throw new UnsupportedOperationException(&quot;updateCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateAsciiStream(String columnLabel, InputStream x) throws SQLException {
+<span class="nc" id="L1127">        throw new UnsupportedOperationException(&quot;updateAsciiStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBinaryStream(String columnLabel, InputStream x) throws SQLException {
+<span class="nc" id="L1133">        throw new UnsupportedOperationException(&quot;updateBinaryStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateCharacterStream(String columnLabel, Reader reader) throws SQLException {
+<span class="nc" id="L1139">        throw new UnsupportedOperationException(&quot;updateCharacterStream&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBlob(int columnIndex, InputStream inputStream) throws SQLException {
+<span class="nc" id="L1145">        throw new UnsupportedOperationException(&quot;updateBlob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateBlob(String columnLabel, InputStream inputStream) throws SQLException {
+<span class="nc" id="L1151">        throw new UnsupportedOperationException(&quot;updateBlob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateClob(int columnIndex, Reader reader) throws SQLException {
+<span class="nc" id="L1157">        throw new UnsupportedOperationException(&quot;updateClob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateClob(String columnLabel, Reader reader) throws SQLException {
+<span class="nc" id="L1163">        throw new UnsupportedOperationException(&quot;updateClob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNClob(int columnIndex, Reader reader) throws SQLException {
+<span class="nc" id="L1169">        throw new UnsupportedOperationException(&quot;updateNClob&quot;);</span>
+
+    }
+
+    @Override
+    public void updateNClob(String columnLabel, Reader reader) throws SQLException {
+<span class="nc" id="L1175">        throw new UnsupportedOperationException(&quot;updateNClob&quot;);</span>
+
+    }
+
+    @Override
+    public &lt;T&gt; T getObject(int columnIndex, Class&lt;T&gt; type) throws SQLException {
+<span class="nc" id="L1181">        throw new UnsupportedOperationException(&quot;getObject&quot;);</span>
+
+    }
+
+    @Override
+    public &lt;T&gt; T getObject(String columnLabel, Class&lt;T&gt; type) throws SQLException {
+<span class="nc" id="L1187">        throw new UnsupportedOperationException(&quot;getObject&quot;);</span>
+
+    }
+
+    @Override
+    public &lt;T&gt; T unwrap(Class&lt;T&gt; iface) throws SQLException {
+<span class="nc" id="L1193">        throw new UnsupportedOperationException(&quot;unwrap&quot;);</span>
+
+    }
+
+    @Override
+    public boolean isWrapperFor(Class&lt;?&gt; iface) throws SQLException {
+<span class="nc" id="L1199">        throw new UnsupportedOperationException(&quot;isWrapperFor&quot;);</span>
+
+    }
+
+    private static class Record extends java.util.LinkedHashMap&lt;String, String&gt; {
+
+        private Record() {
+        }
+
+        public static Record create(String[] rawData, String[] headers) {
+<span class="fc" id="L1209">            int col = 0;</span>
+<span class="fc" id="L1210">            Record record = new Record();</span>
+<span class="fc bfc" id="L1211" title="All 2 branches covered.">            for (String header : headers) {</span>
+<span class="fc" id="L1212">                record.put(header, rawData[col++]);</span>
+            }
+
+<span class="fc" id="L1215">            return record;</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
