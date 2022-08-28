@@ -15,6 +15,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.stream.Stream;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.jooq.impl.DSL.field;
@@ -31,9 +33,9 @@ public class JooqTest {
     @Test
     void simpleQuery() throws Exception {
         try (
-            Connection con = DriverManager.getConnection("jdbc:mock:csv;path=" + outputDir.toString());
-            DSLContext context = DSL.using(con)
+            Connection con = DriverManager.getConnection("jdbc:mock:csv;path=" + outputDir.toString())
         ) {
+            DSLContext context = DSL.using(con);
             Result<org.jooq.Record> records = context.select().from("mytable").fetch();
             assertThat(records.size(), is(equalTo(2)));
             assertThat(records.fields(),
@@ -64,9 +66,9 @@ public class JooqTest {
     @MethodSource("numberTypes")
     <T extends Number> void queryGetNumbers(Class<T> argClass) throws Exception {
         try (
-            Connection con = DriverManager.getConnection("jdbc:mock:csv;path=" + outputDir.toString());
-            DSLContext context = DSL.using(con)
+            Connection con = DriverManager.getConnection("jdbc:mock:csv;path=" + outputDir.toString())
         ) {
+            DSLContext context = DSL.using(con);
             Result<Record2<String, T>> result = context.select(
                 field("id", String.class),
                 field("numberval", argClass)
