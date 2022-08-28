@@ -34,10 +34,12 @@ jobs:
 #        settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
+      if: success() && github.ref == 'refs/heads/main' && github.event_name == 'pull_request'
       run: mvn -B verify
 
     - name: Publish to GitHub Packages
-      run: mvn deploy -DskipTests -P github
+      if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+      run: mvn deploy -P github
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
