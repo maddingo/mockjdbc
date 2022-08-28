@@ -41,22 +41,22 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: 'maven'
-        server-id: sonatype-nexus-snapshots
-        server-username: SONATYPE_USERNAME
-        server-password: SONATYPE_PASSWORD
-        gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-        gpg-passphrase: SONATYPE_GPG_PASSPHRASE
+#    - name: Set up JDK 17
+#      uses: actions/setup-java@v3
+#      with:
+#        java-version: '17'
+#        distribution: 'temurin'
+#        cache: 'maven'
+#        server-id: sonatype-nexus-snapshots
+#        server-username: SONATYPE_USERNAME
+#        server-password: SONATYPE_PASSWORD
+#        gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+#        gpg-passphrase: SONATYPE_GPG_PASSPHRASE
 #        settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-    - name: Publish to Sonatype OSS
-      run: mvn deploy
-      env:
-        MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-        SONATYPE_GPG_PASSPHRASE: ${{ secrets.SONATYPE_GPG_PASSPHRASE }}
+#    - name: Publish to Sonatype OSS
+#      run: mvn deploy
+#      env:
+#        MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+#        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+#        SONATYPE_GPG_PASSPHRASE: ${{ secrets.SONATYPE_GPG_PASSPHRASE }}
