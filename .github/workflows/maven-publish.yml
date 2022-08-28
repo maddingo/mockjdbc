@@ -31,12 +31,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: 'maven'
+        server-id: github-pages
+        server-username: ''
+        server-password: ${{ secrets.GH_TOKEN }}
 #        settings-path: ${{ github.workspace }} # location for the settings.xml file
-
-    - name: show env
-      run: >
-        echo "github.ref=${{ github.ref }}
-        echo "github.event_name=${{ github.event_name }}
 
 #    - name: Build with Maven
 #      if: success() && github.event_name == 'pull_request'
