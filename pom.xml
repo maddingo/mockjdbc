@@ -253,11 +253,11 @@
         <profile>
             <id>github</id>
             <distributionManagement>
-                <repository>
+                <!--repository>
                     <id>github</id>
                     <name>GitHub OWNER Apache Maven Packages</name>
                     <url>https://maven.pkg.github.com/maddingo/mockjdbc</url>
-                </repository>
+                </repository-->
                 <snapshotRepository>
                     <id>github</id>
                     <name>GitHub OWNER Apache Maven Packages</name>
