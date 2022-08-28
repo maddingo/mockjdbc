@@ -119,6 +119,15 @@
         </dependency>
     </dependencies>
 
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.4.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
     <build>
         <extensions>
             <extension>
@@ -255,11 +264,6 @@
         <profile>
             <id>github</id>
             <distributionManagement>
-                <!--repository>
-                    <id>github</id>
-                    <name>GitHub OWNER Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/maddingo/mockjdbc</url>
-                </repository-->
                 <snapshotRepository>
                     <id>github</id>
                     <name>GitHub OWNER Apache Maven Packages</name>
