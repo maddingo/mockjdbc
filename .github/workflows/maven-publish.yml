@@ -33,31 +33,30 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
 
-#    - name: Build with Maven
-#      if: success() && github.event_name == 'pull_request'
-#      run: mvn -B verify
+    - name: Build with Maven
+      if: success() && github.event_name == 'pull_request'
+      run: mvn -B verify
 
-#    - name: Publish to GitHub Packages
-#      if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
-#      run: mvn -B clean deploy -Pgithub,sonar -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
-#      env:
-#        GITHUB_TOKEN: ${{ github.token }}
-#        GH_PAGES_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
-#
+    - name: Publish to GitHub Packages
+      if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+      run: mvn -B clean deploy -Pgithub,sonar -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
     - name: Set up JDK 17 for GH Pages
-      #      if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+      if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: 'maven'
         server-id: github-pages
-        server-username: ''
+        server-username: EMPTY_USERNAME
         server-password: GH_PAGES_TOKEN
 
     - name: Publish to GitHub Packages
-      #      if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
-      run: mvn -B -X site site-deploy
+      if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+      run: mvn -B site site-deploy
       env:
         GH_PAGES_TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
 
