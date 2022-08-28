@@ -7,10 +7,11 @@ Available on Maven Central: [![Maven Central](https://img.shields.io/maven-centr
 
 Sonatype Snapshots: [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/oss.sonatype.org/no.maddin.mockjdbc/mock-jdbc.svg?style=plastic)](https://oss.sonatype.org/#nexus-search;gav~no.maddin.mockjdbc~mock-jdbc~~~)
 
-Build status: ![Github](https://github.com/maddingo/mockjdbc/actions/workflows/maven-publish.yml/badge.svg?branch=master)
+Build status: [![Github](https://github.com/maddingo/mockjdbc/actions/workflows/maven-publish.yml/badge.svg?branch=master)](https://github.com/maddingo/mockjdbc/actions/workflows/maven-publish.yml?query=branch%3Amaster+)
 
 SonarQube: https://sonarcloud.io/project/overview?id=no.maddin.mockjdbc%3Amock-jdbc
 
-Documentation: https://maddingo.github.io/mockjdbc/
-
-
+Documentation: 
+- [All versions](https://maddingo.github.io/mockjdbc/)
+- [Latest Release](https://maddingo.github.io/mockjdbc/0.1.5)
+- [Latest Snapshot](https://maddingo.github.io/mockjdbc/0.2.0-SNAPSHOT)
