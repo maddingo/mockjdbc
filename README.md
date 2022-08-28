@@ -12,6 +12,6 @@ Build status: [![Github](https://github.com/maddingo/mockjdbc/actions/workflows/
 SonarQube: https://sonarcloud.io/project/overview?id=no.maddin.mockjdbc%3Amock-jdbc
 
 Documentation: 
+- [Latest Release](https://maddingo.github.io/mockjdbc/site/0.1.5)
+- [Latest Snapshot](https://maddingo.github.io/mockjdbc/site/0.2.0-SNAPSHOT)
 - [All versions](https://maddingo.github.io/mockjdbc/)
-- [Latest Release](https://maddingo.github.io/mockjdbc/0.1.5)
-- [Latest Snapshot](https://maddingo.github.io/mockjdbc/0.2.0-SNAPSHOT)
