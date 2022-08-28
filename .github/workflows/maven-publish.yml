@@ -44,7 +44,7 @@ jobs:
 
     - name: Publish to GitHub Packages
       if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
-      run: mvn -B clean install sonar:sonar site site-deploy -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+      run: mvn -B clean deploy site site-deploy -Pgithub,sonar -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
