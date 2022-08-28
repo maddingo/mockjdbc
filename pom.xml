@@ -23,8 +23,8 @@
     </issueManagement>
 
     <ciManagement>
-        <system>Travis CI</system>
-        <url>http://travis-ci.org/maddingo/mockjdbc</url>
+        <system>Github Actions</system>
+        <url>https://github.com/maddingo/mockjdbc/actions/workflows/maven-publish.yml</url>
     </ciManagement>
 
     <inceptionYear>2017</inceptionYear>
@@ -256,12 +256,12 @@
                 <repository>
                     <id>github</id>
                     <name>GitHub OWNER Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/maddingo/${project.artifactId}</url>
+                    <url>https://maven.pkg.github.com/maddingo/mockjdbc</url>
                 </repository>
                 <snapshotRepository>
                     <id>github</id>
                     <name>GitHub OWNER Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/maddingo/${project.artifactId}</url>
+                    <url>https://maven.pkg.github.com/maddingo/mockjdbc</url>
                 </snapshotRepository>
             </distributionManagement>
         </profile>
