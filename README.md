@@ -7,6 +7,8 @@ Sonatype Snapshots: [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/
 
 Build status: ![Github](https://github.com/maddingo/mockjdbc/actions/workflows/maven-publish.yml/badge.svg?branch=master)
 
+SonarQube: https://sonarcloud.io/project/overview?id=no.maddin.mockjdbc%3Amock-jdbc
+
 Documentation: https://maddingo.github.io/mockjdbc/
 
 
