@@ -37,7 +37,7 @@ jobs:
       if: success() && github.event_name == 'pull_request'
       run: mvn -B verify
 
-    - name: Publish to GitHub Packages
+    - name: Publish and Check
       if: success() && github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
       run: |
         mvn -B clean deploy -Pgithub,sonar -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
