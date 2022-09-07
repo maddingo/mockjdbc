@@ -185,47 +185,24 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
-                    <goals>deploy site site-deploy</goals>
+                    <goals>deploy site site:stage scm-publish:publish-scm</goals>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <skipDeploy>true</skipDeploy>
-                </configuration>
-            </plugin>
-            <plugin>
-                <!-- Deploy the web site
-                    see https://github.com/github/maven-plugins/issues/22#issuecomment-8421445
-                -->
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.12</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>site-deploy</phase>
-                        <configuration>
-                            <server>github-pages</server>
-
-                            <!-- The commit message -->
-                            <message>Building site for ${project.name}</message>
-                            <!-- The location where the site is uploaded -->
-                            <path>${project.distributionManagement.site.url}</path>
-                            <!-- Use merge or override the content -->
-                            <merge>true</merge>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>@{surefireArgLine}</argLine>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-publish-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <pubScmUrl>${project.scm.developerConnection}</pubScmUrl>
+                    <scmBranch>gh-pages</scmBranch>
                 </configuration>
             </plugin>
 
