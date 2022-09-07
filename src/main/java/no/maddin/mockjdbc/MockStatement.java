@@ -36,19 +36,19 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public void registerOutParameter(int parameterIndex, int sqlType) throws SQLException {
-        throw new UnsupportedOperationException("registerOutParameter");
+        throw new UnsupportedOperationException("registerOutParameter(int, int)");
 
     }
 
     @Override
     public void registerOutParameter(int parameterIndex, int sqlType, int scale) throws SQLException {
-        throw new UnsupportedOperationException("registerOutParameter");
+        throw new UnsupportedOperationException("registerOutParameter(int, int, int)");
 
     }
 
     @Override
     public boolean wasNull() throws SQLException {
-        throw new UnsupportedOperationException("wasNull");
+        throw new UnsupportedOperationException("wasNull()");
 
     }
 
@@ -102,97 +102,97 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public BigDecimal getBigDecimal(int parameterIndex, int scale) throws SQLException {
-        throw new UnsupportedOperationException("getBigDecimal");
+        throw new UnsupportedOperationException("getBigDecimal(int, int)");
 
     }
 
     @Override
     public byte[] getBytes(int parameterIndex) throws SQLException {
-        throw new UnsupportedOperationException("getBytes");
+        throw new UnsupportedOperationException("getBytes(int)");
 
     }
 
     @Override
     public Date getDate(int parameterIndex) throws SQLException {
-        throw new UnsupportedOperationException("getDate");
+        throw new UnsupportedOperationException("getDate(int)");
 
     }
 
     @Override
     public Time getTime(int parameterIndex) throws SQLException {
-        throw new UnsupportedOperationException("getTime");
+        throw new UnsupportedOperationException("getTime(int)");
 
     }
 
     @Override
     public Timestamp getTimestamp(int parameterIndex) throws SQLException {
-        throw new UnsupportedOperationException("getTimestamp");
+        throw new UnsupportedOperationException("getTimestamp(int)");
 
     }
 
     @Override
     public Object getObject(int parameterIndex) throws SQLException {
-        throw new UnsupportedOperationException("getObject");
+        throw new UnsupportedOperationException("getObject(int)");
 
     }
 
     @Override
     public BigDecimal getBigDecimal(int parameterIndex) throws SQLException {
-        throw new UnsupportedOperationException("getBigDecimal");
+        throw new UnsupportedOperationException("getBigDecimal(int)");
 
     }
 
     @Override
     public Object getObject(int parameterIndex, Map<String, Class<?>> map) throws SQLException {
-        throw new UnsupportedOperationException("getObject");
+        throw new UnsupportedOperationException("getObject(int, Map)");
 
     }
 
     @Override
     public Ref getRef(int parameterIndex) throws SQLException {
-        throw new UnsupportedOperationException("getRef");
+        throw new UnsupportedOperationException("getRef(int)");
 
     }
 
     @Override
     public Blob getBlob(int parameterIndex) throws SQLException {
-        throw new UnsupportedOperationException("getBlob");
+        throw new UnsupportedOperationException("getBlob(int)");
 
     }
 
     @Override
     public Clob getClob(int parameterIndex) throws SQLException {
-        throw new UnsupportedOperationException("getClob");
+        throw new UnsupportedOperationException("getClob(int)");
 
     }
 
     @Override
     public Array getArray(int parameterIndex) throws SQLException {
-        throw new UnsupportedOperationException("getArray");
+        throw new UnsupportedOperationException("getArray(int)");
 
     }
 
     @Override
     public Date getDate(int parameterIndex, Calendar cal) throws SQLException {
-        throw new UnsupportedOperationException("getDate");
+        throw new UnsupportedOperationException("getDate(int, Calendar)");
 
     }
 
     @Override
     public Time getTime(int parameterIndex, Calendar cal) throws SQLException {
-        throw new UnsupportedOperationException("getTime");
+        throw new UnsupportedOperationException("getTime(int, Calendar)");
 
     }
 
     @Override
     public Timestamp getTimestamp(int parameterIndex, Calendar cal) throws SQLException {
-        throw new UnsupportedOperationException("getTimestamp");
+        throw new UnsupportedOperationException("getTimestamp(int, Calendar)");
 
     }
 
     @Override
     public void registerOutParameter(int parameterIndex, int sqlType, String typeName) throws SQLException {
-        throw new UnsupportedOperationException("registerOutParameter");
+        throw new UnsupportedOperationException("registerOutParameter(int, int, String)");
 
     }
 
@@ -228,19 +228,19 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public void setNull(String parameterName, int sqlType) throws SQLException {
-        throw new UnsupportedOperationException("setNull");
+        throw new UnsupportedOperationException("setNul(String, int)");
 
     }
 
     @Override
     public void setBoolean(String parameterName, boolean x) throws SQLException {
-        throw new UnsupportedOperationException("setBoolean");
+        throw new UnsupportedOperationException("setBoolean(String, boolean)");
 
     }
 
     @Override
     public void setByte(String parameterName, byte x) throws SQLException {
-        throw new UnsupportedOperationException("setByte");
+        throw new UnsupportedOperationException("setByte(String, x");
 
     }
 
@@ -294,13 +294,13 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public void setDate(String parameterName, Date x) throws SQLException {
-        throw new UnsupportedOperationException("setDate");
+        throw new UnsupportedOperationException("setDate(String, Date)");
 
     }
 
     @Override
     public void setTime(String parameterName, Time x) throws SQLException {
-        throw new UnsupportedOperationException("setTime");
+        throw new UnsupportedOperationException("setTimeString, Time)");
 
     }
 

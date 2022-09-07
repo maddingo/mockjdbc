@@ -9,12 +9,10 @@ import java.util.concurrent.Executor;
 public class MockConnection implements Connection {
     private static final Properties EMPTY_PROPERTIES = new Properties();
     private final Properties connectionProperties = new Properties();
-    private final String url;
     private Statement currentStatement;
     private final MockDatabaseMetaData metadata;
 
     public MockConnection(String url, Properties info) {
-        this.url = url;
         addPropsFromUrl(url);
         this.connectionProperties.putAll(info);
         this.metadata = new MockDatabaseMetaData();
@@ -156,32 +154,32 @@ public class MockConnection implements Connection {
 
     @Override
     public void setHoldability(int holdability) throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        throw new UnsupportedOperationException("setHoldability(int)");
     }
 
     @Override
     public int getHoldability() throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        throw new UnsupportedOperationException("getHoldability");
     }
 
     @Override
     public Savepoint setSavepoint() throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        throw new UnsupportedOperationException("setSavepoint");
     }
 
     @Override
     public Savepoint setSavepoint(String name) throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        throw new UnsupportedOperationException("setSavepoint(String)");
     }
 
     @Override
     public void rollback(Savepoint savepoint) throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        throw new UnsupportedOperationException("rollback(Savepoint)");
     }
 
     @Override
     public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-        throw new UnsupportedOperationException("not yet");
+        throw new UnsupportedOperationException("releaseSavepoint(Savepoint");
     }
 
     @Override
