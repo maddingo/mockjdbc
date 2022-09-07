@@ -69,8 +69,7 @@
 
         <site>
             <id>github</id>
-            <name>Deployment through GitHub's site deployment plugin</name>
-            <url>site/${project.version}</url>
+            <url>scm:git:ssh://git@github.com/maddingo/mockjdbc.git</url>
         </site>
     </distributionManagement>
 
@@ -201,8 +200,8 @@
                 <artifactId>maven-scm-publish-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <pubScmUrl>${project.scm.developerConnection}</pubScmUrl>
                     <scmBranch>gh-pages</scmBranch>
+                    <subDirectory>site/${project.version}</subDirectory>
                 </configuration>
             </plugin>
 
