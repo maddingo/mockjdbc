@@ -15,19 +15,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MockResultSet implements ResultSet {
-    private final File csvFile;
+
     private final Iterator<String> lines;
-    private Record currentRecord;
+    private MockRecord currentMockRecord;
     private MockResultSetMetaData metaData;
 
     MockResultSet(File csvFile) throws SQLException {
-        this.csvFile = csvFile;
         try (Stream<String> stringStream = Files.lines(csvFile.toPath())) {
-            this.lines = stringStream.collect(Collectors.toList()).iterator();
+            this.lines = stringStream.toList().iterator();
         } catch (IOException ex) {
             throw new SQLException(ex);
         }
@@ -49,19 +47,19 @@ public class MockResultSet implements ResultSet {
     public boolean next() throws SQLException {
         boolean hasNext = lines.hasNext();
         if (hasNext) {
-            currentRecord = readRecord(lines.next());
+            currentMockRecord = readRecord(lines.next());
         }
         return hasNext;
     }
 
-    private Record readRecord(String line) {
+    private MockRecord readRecord(String line) {
         String[] stringRecord = splitLine(line);
-        return Record.create(stringRecord, metaData.getColumnNames());
+        return MockRecord.create(stringRecord, metaData.getColumnNames());
     }
 
     @Override
     public void close() throws SQLException {
-        this.currentRecord = null;
+        this.currentMockRecord = null;
         this.metaData = null;
     }
 
@@ -73,7 +71,7 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        return check(currentRecord).get(metaData.getColumnName(columnIndex));
+        return check(currentMockRecord).get(metaData.getColumnName(columnIndex));
     }
 
     @Override
@@ -156,7 +154,7 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        String result = check(currentRecord).get(columnLabel);
+        String result = check(currentMockRecord).get(columnLabel);
         if (result == null) {
             throw new SQLException("No Result for column: " + columnLabel);
         }
@@ -171,44 +169,44 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public byte getByte(String columnLabel) throws SQLException {
-        String val = check(currentRecord).get(columnLabel);
+        String val = check(currentMockRecord).get(columnLabel);
         return Byte.parseByte(val);
     }
 
     @Override
     public short getShort(String columnLabel) throws SQLException {
-        String val = check(currentRecord).get(columnLabel);
+        String val = check(currentMockRecord).get(columnLabel);
         return Short.parseShort(val);
     }
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
-        String val = check(currentRecord).get(columnLabel);
+        String val = check(currentMockRecord).get(columnLabel);
         return Integer.parseInt(val);
     }
 
     @Override
     public long getLong(String columnLabel) throws SQLException {
-        String val = check(currentRecord).get(columnLabel);
+        String val = check(currentMockRecord).get(columnLabel);
         return Long.parseLong(val);
     }
 
-    private Record check(Record record) throws SQLException {
-        if (record == null) {
+    private MockRecord check(MockRecord resultMockRecord) throws SQLException {
+        if (resultMockRecord == null) {
             throw new SQLException("No current record");
         }
-        return record;
+        return resultMockRecord;
     }
 
     @Override
     public float getFloat(String columnLabel) throws SQLException {
-        String val = check(currentRecord).get(columnLabel);
+        String val = check(currentMockRecord).get(columnLabel);
         return Float.parseFloat(val);
     }
 
     @Override
     public double getDouble(String columnLabel) throws SQLException {
-        String val = check(currentRecord).get(columnLabel);
+        String val = check(currentMockRecord).get(columnLabel);
         return Double.parseDouble(val);
     }
 
@@ -226,21 +224,21 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public Date getDate(String columnLabel) throws SQLException {
-        String val = check(currentRecord).get(columnLabel);
+        String val = check(currentMockRecord).get(columnLabel);
         LocalDate ld = LocalDate.parse(val, DateTimeFormatter.ISO_DATE);
         return Date.valueOf(ld);
     }
 
     @Override
     public Time getTime(String columnLabel) throws SQLException {
-        String val = check(currentRecord).get(columnLabel);
+        String val = check(currentMockRecord).get(columnLabel);
         LocalTime lt = LocalTime.parse(val, DateTimeFormatter.ISO_TIME);
         return Time.valueOf(lt);
     }
 
     @Override
     public Timestamp getTimestamp(String columnLabel) throws SQLException {
-        String val = check(currentRecord).get(columnLabel);
+        String val = check(currentMockRecord).get(columnLabel);
         LocalDateTime ldt = LocalDateTime.parse(val, DateTimeFormatter.ISO_DATE_TIME);
         return Timestamp.valueOf(ldt);
     }
@@ -291,13 +289,13 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public Object getObject(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException("getObject");
+        throw new UnsupportedOperationException("getObject(int)");
 
     }
 
     @Override
     public Object getObject(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException("getObject");
+        throw new UnsupportedOperationException("getObject(String)");
 
     }
 
@@ -326,7 +324,7 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
-        String val = check(currentRecord).get(columnLabel);
+        String val = check(currentMockRecord).get(columnLabel);
         return BigDecimal.valueOf(Double.parseDouble(val));
     }
 
@@ -542,31 +540,31 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public void updateAsciiStream(int columnIndex, InputStream x, int length) throws SQLException {
-        throw new UnsupportedOperationException("updateAsciiStream");
+        throw new UnsupportedOperationException("updateAsciiStream(int, InputStream, int)");
 
     }
 
     @Override
     public void updateBinaryStream(int columnIndex, InputStream x, int length) throws SQLException {
-        throw new UnsupportedOperationException("updateBinaryStream");
+        throw new UnsupportedOperationException("updateBinaryStream(int, InputStream, int)");
 
     }
 
     @Override
     public void updateCharacterStream(int columnIndex, Reader x, int length) throws SQLException {
-        throw new UnsupportedOperationException("updateCharacterStream");
+        throw new UnsupportedOperationException("updateCharacterStream(int, Reader, int)");
 
     }
 
     @Override
     public void updateObject(int columnIndex, Object x, int scaleOrLength) throws SQLException {
-        throw new UnsupportedOperationException("updateObject");
+        throw new UnsupportedOperationException("updateObject(int, Object, int)");
 
     }
 
     @Override
     public void updateObject(int columnIndex, Object x) throws SQLException {
-        throw new UnsupportedOperationException("updateObject");
+        throw new UnsupportedOperationException("updateObject(int, Object)");
 
     }
 
@@ -854,25 +852,25 @@ public class MockResultSet implements ResultSet {
 
     @Override
     public void updateBlob(int columnIndex, Blob x) throws SQLException {
-        throw new UnsupportedOperationException("updateBlob");
+        throw new UnsupportedOperationException("updateBlob(int, Blob)");
 
     }
 
     @Override
     public void updateBlob(String columnLabel, Blob x) throws SQLException {
-        throw new UnsupportedOperationException("updateBlob");
+        throw new UnsupportedOperationException("updateBlob(String, Blob)");
 
     }
 
     @Override
     public void updateClob(int columnIndex, Clob x) throws SQLException {
-        throw new UnsupportedOperationException("updateClob");
+        throw new UnsupportedOperationException("updateClob(int, Clob)");
 
     }
 
     @Override
     public void updateClob(String columnLabel, Clob x) throws SQLException {
-        throw new UnsupportedOperationException("updateClob");
+        throw new UnsupportedOperationException("updateClob(String, Clob)");
 
     }
 
@@ -1200,19 +1198,19 @@ public class MockResultSet implements ResultSet {
 
     }
 
-    private static class Record extends java.util.LinkedHashMap<String, String> {
+    private static class MockRecord extends java.util.LinkedHashMap<String, String> {
 
-        private Record() {
+        private MockRecord() {
         }
 
-        public static Record create(String[] rawData, String[] headers) {
+        public static MockRecord create(String[] rawData, String[] headers) {
             int col = 0;
-            Record record = new Record();
+            MockRecord mockRecord = new MockRecord();
             for (String header : headers) {
-                record.put(header, rawData[col++]);
+                mockRecord.put(header, rawData[col++]);
             }
 
-            return record;
+            return mockRecord;
         }
     }
 
