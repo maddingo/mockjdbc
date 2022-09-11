@@ -34,6 +34,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: 'maven'
+        server-id: github
 
     - name: Build with Maven
       if: success() && github.event_name == 'pull_request'

@@ -203,6 +203,7 @@
                 <configuration>
                     <scmBranch>gh-pages</scmBranch>
                     <subDirectory>site/${project.version}</subDirectory>
+                    <serverId>github</serverId>
                 </configuration>
             </plugin>
 
