@@ -15,10 +15,11 @@ on:
   release:
     types: [created]
 
-permissions:
-  packages: write
-  pages: write
-  contents: write
+permissions: write-all
+#permissions:
+#  packages: write
+#  pages: write
+#  contents: write
 
 jobs:
   build:
