@@ -69,7 +69,8 @@
 
         <site>
             <id>github</id>
-            <url>scm:git:ssh://git@github.com/maddingo/mockjdbc.git</url>
+            <!--url>scm:git:ssh://git@github.com/maddingo/mockjdbc.git</url-->
+            <url>scm:git:https://github.com/maddingo/mockjdbc</url>
         </site>
     </distributionManagement>
 
