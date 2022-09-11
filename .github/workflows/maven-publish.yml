@@ -15,6 +15,9 @@ on:
   release:
     types: [created]
 
+permissions:
+  pages: write
+
 jobs:
   build:
 
