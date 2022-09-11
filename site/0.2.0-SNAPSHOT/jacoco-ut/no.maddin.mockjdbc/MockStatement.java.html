@@ -36,19 +36,19 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public void registerOutParameter(int parameterIndex, int sqlType) throws SQLException {
-<span class="nc" id="L39">        throw new UnsupportedOperationException(&quot;registerOutParameter&quot;);</span>
+<span class="nc" id="L39">        throw new UnsupportedOperationException(&quot;registerOutParameter(int, int)&quot;);</span>
 
     }
 
     @Override
     public void registerOutParameter(int parameterIndex, int sqlType, int scale) throws SQLException {
-<span class="nc" id="L45">        throw new UnsupportedOperationException(&quot;registerOutParameter&quot;);</span>
+<span class="nc" id="L45">        throw new UnsupportedOperationException(&quot;registerOutParameter(int, int, int)&quot;);</span>
 
     }
 
     @Override
     public boolean wasNull() throws SQLException {
-<span class="nc" id="L51">        throw new UnsupportedOperationException(&quot;wasNull&quot;);</span>
+<span class="nc" id="L51">        throw new UnsupportedOperationException(&quot;wasNull()&quot;);</span>
 
     }
 
@@ -102,97 +102,97 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public BigDecimal getBigDecimal(int parameterIndex, int scale) throws SQLException {
-<span class="nc" id="L105">        throw new UnsupportedOperationException(&quot;getBigDecimal&quot;);</span>
+<span class="nc" id="L105">        throw new UnsupportedOperationException(&quot;getBigDecimal(int, int)&quot;);</span>
 
     }
 
     @Override
     public byte[] getBytes(int parameterIndex) throws SQLException {
-<span class="nc" id="L111">        throw new UnsupportedOperationException(&quot;getBytes&quot;);</span>
+<span class="nc" id="L111">        throw new UnsupportedOperationException(&quot;getBytes(int)&quot;);</span>
 
     }
 
     @Override
     public Date getDate(int parameterIndex) throws SQLException {
-<span class="nc" id="L117">        throw new UnsupportedOperationException(&quot;getDate&quot;);</span>
+<span class="nc" id="L117">        throw new UnsupportedOperationException(&quot;getDate(int)&quot;);</span>
 
     }
 
     @Override
     public Time getTime(int parameterIndex) throws SQLException {
-<span class="nc" id="L123">        throw new UnsupportedOperationException(&quot;getTime&quot;);</span>
+<span class="nc" id="L123">        throw new UnsupportedOperationException(&quot;getTime(int)&quot;);</span>
 
     }
 
     @Override
     public Timestamp getTimestamp(int parameterIndex) throws SQLException {
-<span class="nc" id="L129">        throw new UnsupportedOperationException(&quot;getTimestamp&quot;);</span>
+<span class="nc" id="L129">        throw new UnsupportedOperationException(&quot;getTimestamp(int)&quot;);</span>
 
     }
 
     @Override
     public Object getObject(int parameterIndex) throws SQLException {
-<span class="nc" id="L135">        throw new UnsupportedOperationException(&quot;getObject&quot;);</span>
+<span class="nc" id="L135">        throw new UnsupportedOperationException(&quot;getObject(int)&quot;);</span>
 
     }
 
     @Override
     public BigDecimal getBigDecimal(int parameterIndex) throws SQLException {
-<span class="nc" id="L141">        throw new UnsupportedOperationException(&quot;getBigDecimal&quot;);</span>
+<span class="nc" id="L141">        throw new UnsupportedOperationException(&quot;getBigDecimal(int)&quot;);</span>
 
     }
 
     @Override
     public Object getObject(int parameterIndex, Map&lt;String, Class&lt;?&gt;&gt; map) throws SQLException {
-<span class="nc" id="L147">        throw new UnsupportedOperationException(&quot;getObject&quot;);</span>
+<span class="nc" id="L147">        throw new UnsupportedOperationException(&quot;getObject(int, Map)&quot;);</span>
 
     }
 
     @Override
     public Ref getRef(int parameterIndex) throws SQLException {
-<span class="nc" id="L153">        throw new UnsupportedOperationException(&quot;getRef&quot;);</span>
+<span class="nc" id="L153">        throw new UnsupportedOperationException(&quot;getRef(int)&quot;);</span>
 
     }
 
     @Override
     public Blob getBlob(int parameterIndex) throws SQLException {
-<span class="nc" id="L159">        throw new UnsupportedOperationException(&quot;getBlob&quot;);</span>
+<span class="nc" id="L159">        throw new UnsupportedOperationException(&quot;getBlob(int)&quot;);</span>
 
     }
 
     @Override
     public Clob getClob(int parameterIndex) throws SQLException {
-<span class="nc" id="L165">        throw new UnsupportedOperationException(&quot;getClob&quot;);</span>
+<span class="nc" id="L165">        throw new UnsupportedOperationException(&quot;getClob(int)&quot;);</span>
 
     }
 
     @Override
     public Array getArray(int parameterIndex) throws SQLException {
-<span class="nc" id="L171">        throw new UnsupportedOperationException(&quot;getArray&quot;);</span>
+<span class="nc" id="L171">        throw new UnsupportedOperationException(&quot;getArray(int)&quot;);</span>
 
     }
 
     @Override
     public Date getDate(int parameterIndex, Calendar cal) throws SQLException {
-<span class="nc" id="L177">        throw new UnsupportedOperationException(&quot;getDate&quot;);</span>
+<span class="nc" id="L177">        throw new UnsupportedOperationException(&quot;getDate(int, Calendar)&quot;);</span>
 
     }
 
     @Override
     public Time getTime(int parameterIndex, Calendar cal) throws SQLException {
-<span class="nc" id="L183">        throw new UnsupportedOperationException(&quot;getTime&quot;);</span>
+<span class="nc" id="L183">        throw new UnsupportedOperationException(&quot;getTime(int, Calendar)&quot;);</span>
 
     }
 
     @Override
     public Timestamp getTimestamp(int parameterIndex, Calendar cal) throws SQLException {
-<span class="nc" id="L189">        throw new UnsupportedOperationException(&quot;getTimestamp&quot;);</span>
+<span class="nc" id="L189">        throw new UnsupportedOperationException(&quot;getTimestamp(int, Calendar)&quot;);</span>
 
     }
 
     @Override
     public void registerOutParameter(int parameterIndex, int sqlType, String typeName) throws SQLException {
-<span class="nc" id="L195">        throw new UnsupportedOperationException(&quot;registerOutParameter&quot;);</span>
+<span class="nc" id="L195">        throw new UnsupportedOperationException(&quot;registerOutParameter(int, int, String)&quot;);</span>
 
     }
 
@@ -228,19 +228,19 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public void setNull(String parameterName, int sqlType) throws SQLException {
-<span class="nc" id="L231">        throw new UnsupportedOperationException(&quot;setNull&quot;);</span>
+<span class="nc" id="L231">        throw new UnsupportedOperationException(&quot;setNul(String, int)&quot;);</span>
 
     }
 
     @Override
     public void setBoolean(String parameterName, boolean x) throws SQLException {
-<span class="nc" id="L237">        throw new UnsupportedOperationException(&quot;setBoolean&quot;);</span>
+<span class="nc" id="L237">        throw new UnsupportedOperationException(&quot;setBoolean(String, boolean)&quot;);</span>
 
     }
 
     @Override
     public void setByte(String parameterName, byte x) throws SQLException {
-<span class="nc" id="L243">        throw new UnsupportedOperationException(&quot;setByte&quot;);</span>
+<span class="nc" id="L243">        throw new UnsupportedOperationException(&quot;setByte(String, x&quot;);</span>
 
     }
 
@@ -294,13 +294,13 @@ public class MockStatement implements CallableStatement {
 
     @Override
     public void setDate(String parameterName, Date x) throws SQLException {
-<span class="nc" id="L297">        throw new UnsupportedOperationException(&quot;setDate&quot;);</span>
+<span class="nc" id="L297">        throw new UnsupportedOperationException(&quot;setDate(String, Date)&quot;);</span>
 
     }
 
     @Override
     public void setTime(String parameterName, Time x) throws SQLException {
-<span class="nc" id="L303">        throw new UnsupportedOperationException(&quot;setTime&quot;);</span>
+<span class="nc" id="L303">        throw new UnsupportedOperationException(&quot;setTimeString, Time)&quot;);</span>
 
     }
 
