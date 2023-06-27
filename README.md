@@ -13,5 +13,5 @@ SonarQube: https://sonarcloud.io/project/overview?id=no.maddin.mockjdbc%3Amock-j
 
 Documentation: 
 - [Latest Release](https://maddingo.github.io/mockjdbc/site/0.1.5)
-- [Latest Snapshot](https://maddingo.github.io/mockjdbc/site/0.2.0-SNAPSHOT)
+- [Latest Snapshot](https://maddingo.github.io/mockjdbc/site/0.2.1-SNAPSHOT)
 - [All versions](https://maddingo.github.io/mockjdbc/)
