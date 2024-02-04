@@ -46,7 +46,7 @@ jobs:
       run: |
         git config --global user.name "Github Actions"
         git config --global user.email "maddingo@github.com"
-        mvn -B clean deploy -Pgithub,sonar -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+        mvn -B clean deploy -Pgithub,sonar -Dsonar.token=${{ secrets.SONARQUBE_TOKEN }}
         mvn -B site site:stage scm-publish:publish-scm
       env:
         GITHUB_TOKEN: ${{ github.token }}
