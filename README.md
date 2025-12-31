@@ -1,3 +1,4 @@
+The repository is archived due to lack of interest.
 # mockjdbc
 Mock JDBC Driver reading data from a text file.
 
